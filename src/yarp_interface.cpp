@@ -59,7 +59,12 @@ void yarp_interface::checkInput()
 
 yarp_interface::~yarp_interface()
 {
-
+    port_send_trj.close();
+    right_arm_configuration_ref_port.close();
+    left_arm_configuration_ref_port.close();
+    torso_configuration_ref_port.close();
+    right_leg_configuration_ref_port.close();
+    left_leg_configuration_ref_port.close();
 }
 
 bool yarp_interface::createPolyDriver(const std::string& kinematic_chain, yarp::dev::PolyDriver& polyDriver)

@@ -19,6 +19,7 @@ endif(COMMAND cmake_policy)
 
 ADD_LIBRARY(file_parser src/file_parser.cpp)
 ADD_LIBRARY(yarp_interface src/yarp_interface.cpp)
+ADD_LIBRARY(simple_homing_lib src/simple_homing.cpp)
 ADD_EXECUTABLE(simple_homing src/main.cpp)
 
 TARGET_LINK_LIBRARIES(file_parser ${YARP_LIBRARIES} icubmod ${ICUB_LIBRARIES})
@@ -28,5 +29,7 @@ SET_TARGET_PROPERTIES(yarp_interface PROPERTIES
                 COMPILE_DEFINITIONS "${definitionsYarpInterface}")
 TARGET_LINK_LIBRARIES(yarp_interface ${YARP_LIBRARIES} icubmod ${ICUB_LIBRARIES})
 
-TARGET_LINK_LIBRARIES(simple_homing yarp_interface file_parser ${YARP_LIBRARIES} icubmod ${ICUB_LIBRARIES})
+TARGET_LINK_LIBRARIES(simple_homing_lib yarp_interface file_parser ${YARP_LIBRARIES} icubmod ${ICUB_LIBRARIES})
+
+TARGET_LINK_LIBRARIES(simple_homing simple_homing_lib yarp_interface file_parser ${YARP_LIBRARIES} icubmod ${ICUB_LIBRARIES})
 
