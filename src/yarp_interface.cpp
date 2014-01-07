@@ -55,7 +55,7 @@ void yarp_interface::checkInput()
 {
     yarp::os::Bottle* bot_send_trj = port_send_trj.read(false);
     if(bot_send_trj != NULL)
-        send_trj = bot_send_trj->get(0).asBool();
+        send_trj = (bool)bot_send_trj->get(0).asInt();
 }
 
 yarp_interface::~yarp_interface()

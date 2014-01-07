@@ -66,12 +66,6 @@ void simple_homing::run()
             iYarp.moveKinematicChain(q_left_leg, "left_leg", max_vel);
             iYarp.moveKinematicChain(q_right_leg, "right_leg", max_vel);
             iYarp.moveKinematicChain(q_torso, "torso", max_vel);
-
-//                std::cout<<"Sending: "<<q_left_arm.toString()<<std::endl;
-//                std::cout<<"Sending: "<<q_right_arm.toString()<<std::endl;
-//                std::cout<<"Sending: "<<q_left_leg.toString()<<std::endl;
-//                std::cout<<"Sending: "<<q_right_leg.toString()<<std::endl;
-//                std::cout<<"Sending: "<<q_torso.toString()<<std::endl;
         }
     }
 
