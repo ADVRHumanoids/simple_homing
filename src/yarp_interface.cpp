@@ -46,7 +46,7 @@ yarp_interface::yarp_interface()
     torso_configuration_ref_port.open("/simple_homing/torso/reference:o");
     left_arm_configuration_ref_port.open("/simple_homing/left_arm/reference:o");
     right_arm_configuration_ref_port.open("/simple_homing/right_arm/reference:o");
-    left_leg_configuration_ref_port.open("/simple_homing/left_leg/reference:o");
+    right_leg_configuration_ref_port.open("/simple_homing/right_leg/reference:o");
     left_leg_configuration_ref_port.open("/simple_homing/left_leg/reference:o");
     status_port.open("/simple_homing/status:o");
 }
