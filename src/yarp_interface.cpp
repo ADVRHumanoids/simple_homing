@@ -42,12 +42,13 @@ yarp_interface::yarp_interface()
 
     send_trj = false;
 
-    port_send_trj.open("/homing/send_trj:i");
-    torso_configuration_ref_port.open("/homing/torso/reference:o");
-    left_arm_configuration_ref_port.open("homing/left_arm/reference:o");
-    right_arm_configuration_ref_port.open("/homing/right_arm/reference:o");
-    left_leg_configuration_ref_port.open("/homing/left_leg/reference:o");
-    left_leg_configuration_ref_port.open("/homing/left_leg/reference:o");
+    port_send_trj.open("/simple_homing/do_homing:i");
+    torso_configuration_ref_port.open("/simple_homing/torso/reference:o");
+    left_arm_configuration_ref_port.open("/simple_homing/left_arm/reference:o");
+    right_arm_configuration_ref_port.open("/simple_homing/right_arm/reference:o");
+    left_leg_configuration_ref_port.open("/simple_homing/left_leg/reference:o");
+    left_leg_configuration_ref_port.open("/simple_homing/left_leg/reference:o");
+    status_port.open("/simple_homing/status:o");
 }
 
 void yarp_interface::checkInput()
@@ -74,7 +75,7 @@ bool yarp_interface::createPolyDriver(const std::string& kinematic_chain, yarp::
     options.put("device", "remote_controlboard");
 
     yarp::os::ConstString s;
-    s = "/homing/coman/" + kinematic_chain;
+    s = "/simple_homing/" + kinematic_chain;
     options.put("local", s.c_str());
 
     yarp::os::ConstString ss;
@@ -108,6 +109,13 @@ void yarp_interface::fillBottleAndSend(const yarp::sig::Vector &q_d, const std::
         left_leg_configuration_ref_port.write(bot);
     else if(kinematic_chain.compare("right_leg") == 0)
         right_leg_configuration_ref_port.write(bot);
+}
+
+void yarp_interface::fillStatusBottleAndSend(const std::string &status)
+{
+    yarp::os::Bottle bot;
+    bot.addString(status.c_str());
+    status_port.write(bot);
 }
 
 void yarp_interface::moveKinematicChain(const yarp::sig::Vector &q_d, const std::string &kinematic_chain,

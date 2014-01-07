@@ -74,4 +74,7 @@ void simple_homing::run()
 //                std::cout<<"Sending: "<<q_torso.toString()<<std::endl;
         }
     }
+
+    iYarp.fillStatusBottleAndSend(computeStatus());
+
 }

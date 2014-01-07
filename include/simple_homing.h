@@ -92,6 +92,32 @@ private:
             q[i] += delta_q[i];
         }
     }
+
+    std::string computeStatus()
+    {
+        if(iYarp.sendTrj())
+            return "moving";
+        else
+        {
+            Vector q_larm(q_left_arm.size());
+            Vector q_rarm(q_right_arm.size());
+            Vector q_lleg(q_left_leg.size());
+            Vector q_rleg(q_right_leg.size());
+            Vector q_t(q_torso.size());
+            iYarp.encodersMotor_torso->getEncoders(q_t.data());
+            iYarp.encodersMotor_left_arm->getEncoders(q_larm.data());
+            iYarp.encodersMotor_right_arm->getEncoders(q_rarm.data());
+            iYarp.encodersMotor_left_leg->getEncoders(q_lleg.data());
+            iYarp.encodersMotor_right_leg->getEncoders(q_rleg.data());
+            if(checkGoal(q_larm, left_arm_homing) &&
+               checkGoal(q_rarm, right_arm_homing) &&
+               checkGoal(q_lleg, left_leg_homing) &&
+               checkGoal(q_rleg, right_leg_homing) &&
+               checkGoal(q_t, torso_homing))
+                return "home";
+            return "ready";
+        }
+    }
 };
 
 #endif
