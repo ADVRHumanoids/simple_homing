@@ -9,6 +9,8 @@
 
 yarp_interface::yarp_interface()
 {
+    _max_vel = 0.0;
+
     if(createPolyDriver("torso", polyDriver_torso))
     {
         polyDriver_torso.view(encodersMotor_torso);
@@ -56,6 +58,15 @@ void yarp_interface::checkInput()
     yarp::os::Bottle* bot_send_trj = port_send_trj.read(false);
     if(bot_send_trj != NULL)
         send_trj = (bool)bot_send_trj->get(0).asInt();
+
+    if(send_trj)
+    {
+        setPositionControlModeKinematicChain("torso", _max_vel);
+        setPositionControlModeKinematicChain("left_arm", _max_vel);
+        setPositionControlModeKinematicChain("right_arm", _max_vel);
+        setPositionControlModeKinematicChain("left_leg", _max_vel);
+        setPositionControlModeKinematicChain("right_leg", _max_vel);
+    }
 }
 
 yarp_interface::~yarp_interface()
@@ -118,44 +129,64 @@ void yarp_interface::fillStatusBottleAndSend(const std::string &status)
     status_port.write(bot);
 }
 
-void yarp_interface::moveKinematicChain(const yarp::sig::Vector &q_d, const std::string &kinematic_chain,
-                                        const double max_speed)
+void yarp_interface::moveKinematicChain(const yarp::sig::Vector &q_d, const std::string &kinematic_chain)
 {
-    for(unsigned int i = 0; i < q_d.size(); ++i)
-    {
-        if(kinematic_chain.compare("torso") == 0)
-        {
-            controlMode_torso->setPositionMode(i);
-            positionControl_torso->setRefSpeed(i, max_speed);
-            positionControl_torso->positionMove(i, q_d[i]);
-        }
+    if(kinematic_chain.compare("torso") == 0)
+        positionControl_torso->positionMove(q_d.data());
 #if USE_POSITION_CONTROL_LEFT_ARM
-        else if(kinematic_chain.compare("left_arm") == 0)
-        {
-            controlMode_left_arm->setPositionMode(i);
-            positionControl_left_arm->setRefSpeed(i, max_speed);
-            positionControl_left_arm->positionMove(i, q_d[i]);
-        }
+    else if(kinematic_chain.compare("left_arm") == 0)
+        positionControl_left_arm->positionMove(q_d.data());
 #endif
 #if USE_POSITION_CONTROL_RIGHT_ARM
-        else if(kinematic_chain.compare("right_arm") == 0)
-        {
-            controlMode_right_arm->setPositionMode(i);
-            positionControl_right_arm->setRefSpeed(i, max_speed);
-            positionControl_right_arm->positionMove(i, q_d[i]);
-        }
+    else if(kinematic_chain.compare("right_arm") == 0)
+        positionControl_right_arm->positionMove(q_d.data());
 #endif
-        else if(kinematic_chain.compare("left_leg") == 0)
-        {
+    else if(kinematic_chain.compare("left_leg") == 0)
+        positionControl_left_leg->positionMove(q_d.data());
+    else if(kinematic_chain.compare("right_leg") == 0)
+        positionControl_right_leg->positionMove(q_d.data());
+}
+
+void yarp_interface::setPositionControlModeKinematicChain(const std::string &kinematic_chain, const double max_speed)
+{
+    int number_of_joints = 0;
+    if(kinematic_chain.compare("torso") == 0)
+    {
+        positionControl_torso->getAxes(&number_of_joints);
+        for(unsigned int i = 0; i < number_of_joints; ++i){
+            controlMode_torso->setPositionMode(i);
+            positionControl_torso->setRefSpeed(i, max_speed);}
+    }
+#if USE_POSITION_CONTROL_LEFT_ARM
+    else if(kinematic_chain.compare("left_arm") == 0)
+    {
+        positionControl_left_arm->getAxes(&number_of_joints);
+        for(unsigned int i = 0; i < number_of_joints; ++i){
+            controlMode_left_arm->setPositionMode(i);
+            positionControl_left_arm->setRefSpeed(i, max_speed);}
+    }
+#endif
+#if USE_POSITION_CONTROL_RIGHT_ARM
+    else if(kinematic_chain.compare("right_arm") == 0)
+    {
+        positionControl_right_arm->getAxes(&number_of_joints);
+        for(unsigned int i = 0; i < number_of_joints; ++i){
+            controlMode_right_arm->setPositionMode(i);
+            positionControl_right_arm->setRefSpeed(i, max_speed);}
+    }
+#endif
+    else if(kinematic_chain.compare("left_leg") == 0)
+    {
+        positionControl_left_leg->getAxes(&number_of_joints);
+        for(unsigned int i = 0; i < number_of_joints; ++i){
             controlMode_left_leg->setPositionMode(i);
-            positionControl_left_leg->setRefSpeed(i, max_speed);
-            positionControl_left_leg->positionMove(i, q_d[i]);
-        }
-        else if(kinematic_chain.compare("right_leg") == 0)
-        {
+            positionControl_left_leg->setRefSpeed(i, max_speed);}
+    }
+    else if(kinematic_chain.compare("right_leg") == 0)
+    {
+        positionControl_right_leg->getAxes(&number_of_joints);
+        for(unsigned int i = 0; i < number_of_joints; ++i){
             controlMode_right_leg->setPositionMode(i);
-            positionControl_right_leg->setRefSpeed(i, max_speed);
-            positionControl_right_leg->positionMove(i, q_d[i]);
-        }
+            positionControl_right_leg->setRefSpeed(i, max_speed);}
     }
 }

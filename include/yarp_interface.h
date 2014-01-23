@@ -35,8 +35,9 @@ public:
     void stop() {send_trj = false;}
     void fillBottleAndSend(const yarp::sig::Vector& q_d, const std::string& kinematic_chain);
     void fillStatusBottleAndSend(const std::string& status);
-    void moveKinematicChain(const yarp::sig::Vector& q_d, const std::string& kinematic_chain,
-                            const double max_speed);
+    void setPositionControlModeKinematicChain(const std::string& kinematic_chain, const double max_speed);
+    void moveKinematicChain(const yarp::sig::Vector& q_d, const std::string& kinematic_chain);
+    void setMaxVel(const double max_vel){ _max_vel = max_vel;}
 
 private:
     yarp::dev::PolyDriver polyDriver_torso;
@@ -52,9 +53,9 @@ private:
     yarp::os::Port right_leg_configuration_ref_port;
     yarp::os::Port left_leg_configuration_ref_port;
     yarp::os::Port status_port;
+    double _max_vel;
 
     bool createPolyDriver(const std::string &kinematic_chain, yarp::dev::PolyDriver &polyDriver);
-
 };
 
 #endif

@@ -22,6 +22,7 @@ bool simple_homing::threadInit()
     else
         max_q_increment = max_vel*_period; //[deg]
 
+    iYarp.setMaxVel(max_vel);
     return true;
 }
 
@@ -61,11 +62,11 @@ void simple_homing::run()
             iYarp.fillBottleAndSend(q_right_leg, "right_leg");
             iYarp.fillBottleAndSend(q_torso, "torso");
 
-            iYarp.moveKinematicChain(q_left_arm, "left_arm", max_vel);
-            iYarp.moveKinematicChain(q_right_arm, "right_arm", max_vel);
-            iYarp.moveKinematicChain(q_left_leg, "left_leg", max_vel);
-            iYarp.moveKinematicChain(q_right_leg, "right_leg", max_vel);
-            iYarp.moveKinematicChain(q_torso, "torso", max_vel);
+            iYarp.moveKinematicChain(q_left_arm, "left_arm");
+            iYarp.moveKinematicChain(q_right_arm, "right_arm");
+            iYarp.moveKinematicChain(q_left_leg, "left_leg");
+            iYarp.moveKinematicChain(q_right_leg, "right_leg");
+            iYarp.moveKinematicChain(q_torso, "torso");
         }
     }
 
