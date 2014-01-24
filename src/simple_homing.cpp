@@ -7,6 +7,10 @@ using namespace yarp::sig;
 
 bool simple_homing::threadInit()
 {
+    struct sched_param thread_param;
+    thread_param.sched_priority = 99;
+    pthread_setschedparam(pthread_self(), SCHED_FIFO, &thread_param);
+
     if(!parser.getConfiguration("torso", torso_homing))
         std::cout<<"Error loading torso homing. All zeros will be used."<<std::endl;
     if(!parser.getConfiguration("left_arm", left_arm_homing))
