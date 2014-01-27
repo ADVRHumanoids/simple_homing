@@ -26,7 +26,6 @@ bool simple_homing::threadInit()
     else
         max_q_increment = max_vel*_period; //[deg]
 
-    iYarp.setMaxVel(max_vel);
     return true;
 }
 

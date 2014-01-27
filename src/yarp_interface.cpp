@@ -9,8 +9,6 @@
 
 yarp_interface::yarp_interface()
 {
-    _max_vel = 0.0;
-
     isTorsoAvailable = false;
     isLeftArmAvailable = false;
     isRightArmAvailable = false;
@@ -72,11 +70,11 @@ void yarp_interface::checkInput()
 
     if(send_trj)
     {
-        setPositionControlModeKinematicChain("torso", _max_vel);
-        setPositionControlModeKinematicChain("left_arm", _max_vel);
-        setPositionControlModeKinematicChain("right_arm", _max_vel);
-        setPositionControlModeKinematicChain("left_leg", _max_vel);
-        setPositionControlModeKinematicChain("right_leg", _max_vel);
+        setPositionControlModeKinematicChain("torso");
+        setPositionControlModeKinematicChain("left_arm");
+        setPositionControlModeKinematicChain("right_arm");
+        setPositionControlModeKinematicChain("left_leg");
+        setPositionControlModeKinematicChain("right_leg");
     }
 }
 
@@ -158,7 +156,7 @@ void yarp_interface::moveKinematicChain(const yarp::sig::Vector &q_d, const std:
         positionControl_right_leg->setPositions(q_d.data());
 }
 
-void yarp_interface::setPositionControlModeKinematicChain(const std::string &kinematic_chain, const double max_speed)
+void yarp_interface::setPositionControlModeKinematicChain(const std::string &kinematic_chain)
 {
     int number_of_joints = 0;
     if(kinematic_chain.compare("torso") == 0)
