@@ -143,19 +143,19 @@ void yarp_interface::fillStatusBottleAndSend(const std::string &status)
 void yarp_interface::moveKinematicChain(const yarp::sig::Vector &q_d, const std::string &kinematic_chain)
 {
     if(kinematic_chain.compare("torso") == 0)
-        positionControl_torso->positionMove(q_d.data());
+        positionControl_torso->setPositions(q_d.data());
 #if USE_POSITION_CONTROL_LEFT_ARM
     else if(kinematic_chain.compare("left_arm") == 0)
-        positionControl_left_arm->positionMove(q_d.data());
+        positionControl_left_arm->setPositions(q_d.data());
 #endif
 #if USE_POSITION_CONTROL_RIGHT_ARM
     else if(kinematic_chain.compare("right_arm") == 0)
-        positionControl_right_arm->positionMove(q_d.data());
+        positionControl_right_arm->setPositions(q_d.data());
 #endif
     else if(kinematic_chain.compare("left_leg") == 0)
-        positionControl_left_leg->positionMove(q_d.data());
+        positionControl_left_leg->setPositions(q_d.data());
     else if(kinematic_chain.compare("right_leg") == 0)
-        positionControl_right_leg->positionMove(q_d.data());
+        positionControl_right_leg->setPositions(q_d.data());
 }
 
 void yarp_interface::setPositionControlModeKinematicChain(const std::string &kinematic_chain, const double max_speed)
@@ -163,41 +163,36 @@ void yarp_interface::setPositionControlModeKinematicChain(const std::string &kin
     int number_of_joints = 0;
     if(kinematic_chain.compare("torso") == 0)
     {
-        positionControl_torso->getAxes(&number_of_joints);
-        for(unsigned int i = 0; i < number_of_joints; ++i){
+        encodersMotor_torso->getAxes(&number_of_joints);
+        for(unsigned int i = 0; i < number_of_joints; ++i)
             controlMode_torso->setPositionMode(i);
-            positionControl_torso->setRefSpeed(i, max_speed);}
     }
 #if USE_POSITION_CONTROL_LEFT_ARM
     else if(kinematic_chain.compare("left_arm") == 0)
     {
-        positionControl_left_arm->getAxes(&number_of_joints);
-        for(unsigned int i = 0; i < number_of_joints; ++i){
+        encodersMotor_left_arm->getAxes(&number_of_joints);
+        for(unsigned int i = 0; i < number_of_joints; ++i)
             controlMode_left_arm->setPositionMode(i);
-            positionControl_left_arm->setRefSpeed(i, max_speed);}
     }
 #endif
 #if USE_POSITION_CONTROL_RIGHT_ARM
     else if(kinematic_chain.compare("right_arm") == 0)
     {
-        positionControl_right_arm->getAxes(&number_of_joints);
-        for(unsigned int i = 0; i < number_of_joints; ++i){
+        encodersMotor_right_arm->getAxes(&number_of_joints);
+        for(unsigned int i = 0; i < number_of_joints; ++i)
             controlMode_right_arm->setPositionMode(i);
-            positionControl_right_arm->setRefSpeed(i, max_speed);}
     }
 #endif
     else if(kinematic_chain.compare("left_leg") == 0)
     {
-        positionControl_left_leg->getAxes(&number_of_joints);
-        for(unsigned int i = 0; i < number_of_joints; ++i){
+        encodersMotor_left_leg->getAxes(&number_of_joints);
+        for(unsigned int i = 0; i < number_of_joints; ++i)
             controlMode_left_leg->setPositionMode(i);
-            positionControl_left_leg->setRefSpeed(i, max_speed);}
     }
     else if(kinematic_chain.compare("right_leg") == 0)
     {
-        positionControl_right_leg->getAxes(&number_of_joints);
-        for(unsigned int i = 0; i < number_of_joints; ++i){
+        encodersMotor_right_leg->getAxes(&number_of_joints);
+        for(unsigned int i = 0; i < number_of_joints; ++i)
             controlMode_right_leg->setPositionMode(i);
-            positionControl_right_leg->setRefSpeed(i, max_speed);}
     }
 }

@@ -20,11 +20,11 @@ public:
     yarp::dev::IEncodersTimed *encodersMotor_right_arm;
     yarp::dev::IEncodersTimed *encodersMotor_left_leg;
     yarp::dev::IEncodersTimed *encodersMotor_right_leg;
-    yarp::dev::IPositionControl2 *positionControl_torso;
-    yarp::dev::IPositionControl2 *positionControl_left_arm;
-    yarp::dev::IPositionControl2 *positionControl_right_arm;
-    yarp::dev::IPositionControl2 *positionControl_left_leg;
-    yarp::dev::IPositionControl2 *positionControl_right_leg;
+    yarp::dev::IPositionDirect *positionControl_torso;
+    yarp::dev::IPositionDirect *positionControl_left_arm;
+    yarp::dev::IPositionDirect *positionControl_right_arm;
+    yarp::dev::IPositionDirect *positionControl_left_leg;
+    yarp::dev::IPositionDirect *positionControl_right_leg;
     yarp::dev::IControlMode *controlMode_torso;
     yarp::dev::IControlMode *controlMode_left_arm;
     yarp::dev::IControlMode *controlMode_right_arm;
