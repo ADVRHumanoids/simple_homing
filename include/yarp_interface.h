@@ -30,6 +30,11 @@ public:
     yarp::dev::IControlMode *controlMode_right_arm;
     yarp::dev::IControlMode *controlMode_left_leg;
     yarp::dev::IControlMode *controlMode_right_leg;
+    bool isTorsoAvailable;
+    bool isLeftArmAvailable;
+    bool isRightArmAvailable;
+    bool isLeftLegAvailable;
+    bool isRightLegAvailable;
 
     void checkInput();
     void stop() {send_trj = false;}

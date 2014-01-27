@@ -11,45 +11,56 @@ yarp_interface::yarp_interface()
 {
     _max_vel = 0.0;
 
+    isTorsoAvailable = false;
+    isLeftArmAvailable = false;
+    isRightArmAvailable = false;
+    isLeftLegAvailable = false;
+    isRightLegAvailable = false;
+
     if(createPolyDriver("torso", polyDriver_torso))
     {
         polyDriver_torso.view(encodersMotor_torso);
         polyDriver_torso.view(positionControl_torso);
         polyDriver_torso.view(controlMode_torso);
+        torso_configuration_ref_port.open("/simple_homing/torso/reference:o");
+        isTorsoAvailable = true;
     }
     if(createPolyDriver("left_arm", polyDriver_left_arm))
     {
         polyDriver_left_arm.view(encodersMotor_left_arm);
         polyDriver_left_arm.view(positionControl_left_arm);
         polyDriver_left_arm.view(controlMode_left_arm);
+        left_arm_configuration_ref_port.open("/simple_homing/left_arm/reference:o");
+        isLeftArmAvailable = true;
     }
     if(createPolyDriver("right_arm", polyDriver_right_arm))
     {
         polyDriver_right_arm.view(encodersMotor_right_arm);
         polyDriver_right_arm.view(positionControl_right_arm);
         polyDriver_right_arm.view(controlMode_right_arm);
+        right_arm_configuration_ref_port.open("/simple_homing/right_arm/reference:o");
+        isRightArmAvailable = true;
     }
     if(createPolyDriver("left_leg", polyDriver_left_leg))
     {
         polyDriver_left_leg.view(encodersMotor_left_leg);
         polyDriver_left_leg.view(positionControl_left_leg);
         polyDriver_left_leg.view(controlMode_left_leg);
+        left_leg_configuration_ref_port.open("/simple_homing/left_leg/reference:o");
+        isLeftLegAvailable = true;
     }
     if(createPolyDriver("right_leg", polyDriver_right_leg))
     {
         polyDriver_right_leg.view(encodersMotor_right_leg);
         polyDriver_right_leg.view(positionControl_right_leg);
         polyDriver_right_leg.view(controlMode_right_leg);
+        right_leg_configuration_ref_port.open("/simple_homing/right_leg/reference:o");
+        isRightLegAvailable = true;
     }
 
     send_trj = false;
 
     port_send_trj.open("/simple_homing/do_homing:i");
-    torso_configuration_ref_port.open("/simple_homing/torso/reference:o");
-    left_arm_configuration_ref_port.open("/simple_homing/left_arm/reference:o");
-    right_arm_configuration_ref_port.open("/simple_homing/right_arm/reference:o");
-    right_leg_configuration_ref_port.open("/simple_homing/right_leg/reference:o");
-    left_leg_configuration_ref_port.open("/simple_homing/left_leg/reference:o");
     status_port.open("/simple_homing/status:o");
 }
 

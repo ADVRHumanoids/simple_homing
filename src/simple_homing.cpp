@@ -53,24 +53,33 @@ void simple_homing::run()
         }
         else
         {
+            if(iYarp.isTorsoAvailable){
+                controlLaw(torso_homing, max_q_increment, q_torso);
+                iYarp.fillBottleAndSend(q_torso, "torso");
+                iYarp.moveKinematicChain(q_torso, "torso");
+            }
+            if(iYarp.isLeftArmAvailable){
+                controlLaw(left_arm_homing, max_q_increment, q_left_arm);
+                iYarp.fillBottleAndSend(q_left_arm, "left_arm");
+                iYarp.moveKinematicChain(q_left_arm, "left_arm");
+            }
+            if(iYarp.isRightArmAvailable){
+                controlLaw(right_arm_homing, max_q_increment, q_right_arm);
+                iYarp.fillBottleAndSend(q_right_arm, "right_arm");
+                iYarp.moveKinematicChain(q_right_arm, "right_arm");
+            }
+            if(iYarp.isLeftLegAvailable){
+                controlLaw(left_leg_homing, max_q_increment, q_left_leg);
+                iYarp.fillBottleAndSend(q_left_leg, "left_leg");
+                iYarp.moveKinematicChain(q_left_leg, "left_leg");
 
-            controlLaw(left_arm_homing, max_q_increment, q_left_arm);
-            controlLaw(right_arm_homing, max_q_increment, q_right_arm);
-            controlLaw(left_leg_homing, max_q_increment, q_left_leg);
-            controlLaw(right_leg_homing, max_q_increment, q_right_leg);
-            controlLaw(torso_homing, max_q_increment, q_torso);
+            }
+            if(iYarp.isRightLegAvailable){
+                controlLaw(right_leg_homing, max_q_increment, q_right_leg);
+                iYarp.fillBottleAndSend(q_right_leg, "right_leg");
+                iYarp.moveKinematicChain(q_right_leg, "right_leg");
+            }
 
-            iYarp.fillBottleAndSend(q_left_arm, "left_arm");
-            iYarp.fillBottleAndSend(q_right_arm, "right_arm");
-            iYarp.fillBottleAndSend(q_left_leg, "left_leg");
-            iYarp.fillBottleAndSend(q_right_leg, "right_leg");
-            iYarp.fillBottleAndSend(q_torso, "torso");
-
-            iYarp.moveKinematicChain(q_left_arm, "left_arm");
-            iYarp.moveKinematicChain(q_right_arm, "right_arm");
-            iYarp.moveKinematicChain(q_left_leg, "left_leg");
-            iYarp.moveKinematicChain(q_right_leg, "right_leg");
-            iYarp.moveKinematicChain(q_torso, "torso");
         }
     }
 
