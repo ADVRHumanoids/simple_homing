@@ -37,9 +37,11 @@ int main(int argc, char* argv[])
     if(!yarp.checkNetwork()){
         std::cout<<"yarpserver not running, pls run yarpserver"<<std::endl;
         return 0;}
+    yarp.init();
 
     simple_homing_module mod;
     mod.my_configure(argc, argv);
 
+    yarp.fini();
     return mod.runModule();
 }

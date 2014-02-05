@@ -80,6 +80,16 @@ void yarp_interface::checkInput()
 
 yarp_interface::~yarp_interface()
 {
+    if(polyDriver_torso.isValid())
+        polyDriver_torso.close();
+    if(polyDriver_left_arm.isValid())
+        polyDriver_left_arm.close();
+    if(polyDriver_right_arm.isValid())
+        polyDriver_right_arm.close();
+    if(polyDriver_left_leg.isValid())
+        polyDriver_left_leg.close();
+    if(polyDriver_right_leg.isValid())
+        polyDriver_right_leg.close();
     port_send_trj.close();
     right_arm_configuration_ref_port.close();
     left_arm_configuration_ref_port.close();

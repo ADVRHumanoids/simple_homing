@@ -50,6 +50,7 @@ private:
     yarp::dev::PolyDriver polyDriver_left_leg;
     yarp::dev::PolyDriver polyDriver_right_leg;
     bool send_trj;
+    bool set_position_mode;
     yarp::os::BufferedPort<yarp::os::Bottle> port_send_trj;
     yarp::os::Port right_arm_configuration_ref_port;
     yarp::os::Port left_arm_configuration_ref_port;

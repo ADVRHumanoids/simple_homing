@@ -34,12 +34,14 @@ void simple_homing::run()
     iYarp.checkInput();
     if(iYarp.sendTrj())
     {
-        //CL
-        iYarp.encodersMotor_torso->getEncoders(q_torso.data());
-        iYarp.encodersMotor_left_arm->getEncoders(q_left_arm.data());
-        iYarp.encodersMotor_right_arm->getEncoders(q_right_arm.data());
-        iYarp.encodersMotor_left_leg->getEncoders(q_left_leg.data());
-        iYarp.encodersMotor_right_leg->getEncoders(q_right_leg.data());
+        if(!set_init_config){
+            iYarp.encodersMotor_torso->getEncoders(q_torso.data());
+            iYarp.encodersMotor_left_arm->getEncoders(q_left_arm.data());
+            iYarp.encodersMotor_right_arm->getEncoders(q_right_arm.data());
+            iYarp.encodersMotor_left_leg->getEncoders(q_left_leg.data());
+            iYarp.encodersMotor_right_leg->getEncoders(q_right_leg.data());
+            set_init_config = true;
+        }
 
         if(checkGoal(q_left_arm, left_arm_homing) &&
            checkGoal(q_right_arm, right_arm_homing) &&
@@ -48,6 +50,7 @@ void simple_homing::run()
            checkGoal(q_torso, torso_homing))
         {
             iYarp.stop();
+            set_init_config = false;
             std::cout<<"Reached desired homing position"<<std::endl;
         }
         else

@@ -44,6 +44,8 @@ public:
 
         _period = period;
         max_q_increment = max_vel*_period; //[deg]
+
+        set_init_config = false;
     }
 
     virtual bool threadInit();
@@ -69,6 +71,7 @@ private:
     double max_vel;
     double max_q_increment;
     double _period;
+    bool set_init_config;
 
 
     bool checkGoal(const Vector& q, const Vector& q_goal)
