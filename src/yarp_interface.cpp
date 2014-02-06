@@ -57,6 +57,7 @@ yarp_interface::yarp_interface()
     }
 
     send_trj = false;
+    set_position_mode = false;
 
     port_send_trj.open("/simple_homing/do_homing:i");
     status_port.open("/simple_homing/status:o");
@@ -65,16 +66,18 @@ yarp_interface::yarp_interface()
 void yarp_interface::checkInput()
 {
     yarp::os::Bottle* bot_send_trj = port_send_trj.read(false);
-    if(bot_send_trj != NULL)
+    if(bot_send_trj != NULL){
         send_trj = (bool)bot_send_trj->get(0).asInt();
+        set_position_mode = false;}
 
-    if(send_trj)
+    if(send_trj && !set_position_mode)
     {
         setPositionControlModeKinematicChain("torso");
         setPositionControlModeKinematicChain("left_arm");
         setPositionControlModeKinematicChain("right_arm");
         setPositionControlModeKinematicChain("left_leg");
         setPositionControlModeKinematicChain("right_leg");
+        set_position_mode = true;
     }
 }
 
@@ -151,19 +154,24 @@ void yarp_interface::fillStatusBottleAndSend(const std::string &status)
 void yarp_interface::moveKinematicChain(const yarp::sig::Vector &q_d, const std::string &kinematic_chain)
 {
     if(kinematic_chain.compare("torso") == 0)
-        positionControl_torso->setPositions(q_d.data());
+        if(!positionControl_torso->setPositions(q_d.data()))
+            std::cout<<"Cannot move torso using Direct Position Ctrl"<<std::cout;
 #if USE_POSITION_CONTROL_LEFT_ARM
-    else if(kinematic_chain.compare("left_arm") == 0)
-        positionControl_left_arm->setPositions(q_d.data());
+    if(kinematic_chain.compare("left_arm") == 0)
+        if(!positionControl_left_arm->setPositions(q_d.data()))
+            std::cout<<"Cannot move left_arm using Direct Position Ctrl"<<std::cout;
 #endif
 #if USE_POSITION_CONTROL_RIGHT_ARM
-    else if(kinematic_chain.compare("right_arm") == 0)
-        positionControl_right_arm->setPositions(q_d.data());
+    if(kinematic_chain.compare("right_arm") == 0)
+        if(!positionControl_right_arm->setPositions(q_d.data()))
+            std::cout<<"Cannot move right_arm using Direct Position Ctrl"<<std::cout;
 #endif
-    else if(kinematic_chain.compare("left_leg") == 0)
-        positionControl_left_leg->setPositions(q_d.data());
-    else if(kinematic_chain.compare("right_leg") == 0)
-        positionControl_right_leg->setPositions(q_d.data());
+    if(kinematic_chain.compare("left_leg") == 0)
+        if(!positionControl_left_leg->setPositions(q_d.data()))
+            std::cout<<"Cannot move left_leg using Direct Position Ctrl"<<std::cout;
+    if(kinematic_chain.compare("right_leg") == 0)
+        if(!positionControl_right_leg->setPositions(q_d.data()))
+            std::cout<<"Cannot move right_leg using Direct Position Ctrl"<<std::cout;
 }
 
 void yarp_interface::setPositionControlModeKinematicChain(const std::string &kinematic_chain)
