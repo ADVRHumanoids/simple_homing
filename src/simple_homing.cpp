@@ -5,6 +5,8 @@
 using namespace yarp::os;
 using namespace yarp::sig;
 
+#define SENDING_TIMING 0.2 //[sec]
+
 bool simple_homing::threadInit()
 {
     struct sched_param thread_param;
@@ -30,7 +32,7 @@ bool simple_homing::threadInit()
 }
 
 void simple_homing::run()
-{
+{   
     iYarp.checkInput();
     if(iYarp.sendTrj())
     {
@@ -84,7 +86,12 @@ void simple_homing::run()
 
         }
     }
+    _t_counter++;
 
-    iYarp.fillStatusBottleAndSend(computeStatus());
+    if((double)_t_counter*_t_period >= SENDING_TIMING)
+    {
+        iYarp.fillStatusBottleAndSend(computeStatus());
+        _t_counter = 0;
+    }
 
 }
