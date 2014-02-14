@@ -6,6 +6,7 @@ using namespace yarp::os;
 using namespace yarp::sig;
 
 #define SENDING_TIMING 0.2 //[sec]
+#define READING_TIMING 0.2 //[sec]
 
 bool simple_homing::threadInit()
 {
@@ -33,7 +34,12 @@ bool simple_homing::threadInit()
 
 void simple_homing::run()
 {   
-    iYarp.checkInput();
+    if((double)_t_counter_reading*_t_period >= READING_TIMING)
+    {
+        iYarp.checkInput();
+        _t_counter_reading = 0;
+    }
+
     if(iYarp.sendTrj())
     {
         if(!set_init_config){
@@ -86,12 +92,13 @@ void simple_homing::run()
 
         }
     }
-    _t_counter++;
 
-    if((double)_t_counter*_t_period >= SENDING_TIMING)
+    if((double)_t_counter_sending*_t_period >= SENDING_TIMING)
     {
         iYarp.fillStatusBottleAndSend(computeStatus());
-        _t_counter = 0;
+        _t_counter_sending = 0;
     }
 
+    _t_counter_sending++;
+    _t_counter_reading++;
 }
