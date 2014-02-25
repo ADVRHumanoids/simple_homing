@@ -19,13 +19,11 @@ public:
 
 private:
     std::string _file_name;
-    std::string _file_path;
-    std::string _parameter_file_name;
-    std::string _parameter_file_path;
+    std::string _file_context;
     std::string _parameter_help;
-    yarp::os::Property _initial_config_file;
+    yarp::os::ResourceFinder _config_file;
 
-    bool set_input_parameter(int argc, char *argv[]);
+    bool set_input_parameter(yarp::os::Property &_command_line);
     void load_file();
 };
 
