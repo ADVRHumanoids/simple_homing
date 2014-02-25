@@ -5,6 +5,7 @@ file_parser::file_parser():
     _file_name("initial_config.ini"),
     _file_context("simple_homing"),
     _parameter_help("help"),  //Without space does not work!
+    _parameter_simulation("simulation"),
     _config_file()
 {
     _config_file.setVerbose(true);
@@ -17,6 +18,7 @@ file_parser::file_parser(int argc, char *argv[]):
     _file_name("initial_config.ini"),
     _file_context("simple_homing"),
     _parameter_help("help"),  //Without space does not work!
+    _parameter_simulation("simulation"),
     _config_file()
 {
     yarp::os::Property _command_line;
@@ -43,6 +45,10 @@ bool file_parser::set_input_parameter(yarp::os::Property &_command_line)
     {
        help();
        return false;
+    }
+    if(_command_line.check(_parameter_simulation.c_str()))
+    {
+        _file_name = "initial_config_simulation.ini";
     }
     return true;
 }
@@ -90,5 +96,6 @@ void file_parser::help()
     std::cout<<"help:\n";
     std::cout<<"\nNO ARGUMENT:\n Actual folder will be used and the name of the file is initial_config.ini\n USAGE: ./simple_homing\n";
     std::cout<<"\nSET FILE PATH:\n .simple_homing --context /home/user/demo/config\n";
-    std::cout<<"\nSET FILE NAME:\n .simple_homing --from my_initial_configuration.ini\n"<<std::endl;
+    std::cout<<"\nSET FILE NAME:\n .simple_homing --from my_initial_configuration.ini\n";
+    std::cout<<"\nSET SIMULATION MODE:\n .simple_homing --simulation\n"<<std::endl;
 }

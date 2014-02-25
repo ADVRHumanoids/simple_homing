@@ -21,6 +21,7 @@ private:
     std::string _file_name;
     std::string _file_context;
     std::string _parameter_help;
+    std::string _parameter_simulation;
     yarp::os::ResourceFinder _config_file;
 
     bool set_input_parameter(yarp::os::Property &_command_line);
