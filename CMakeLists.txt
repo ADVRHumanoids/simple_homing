@@ -20,21 +20,26 @@ if(COMMAND cmake_policy)
     cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
-ADD_LIBRARY(file_parser src/file_parser.cpp include/file_parser.h)
-ADD_LIBRARY(yarp_interface src/yarp_interface.cpp)
-ADD_LIBRARY(simple_homing_lib src/simple_homing.cpp)
+ADD_LIBRARY(${PROJECT_NAME}_file_parser STATIC src/file_parser.cpp include/file_parser.h)
+ADD_LIBRARY(${PROJECT_NAME}_yarp_interface STATIC src/yarp_interface.cpp)
+ADD_LIBRARY(${PROJECT_NAME}_lib STATIC src/simple_homing.cpp)
 ADD_EXECUTABLE(simple_homing src/main.cpp)
 
-TARGET_LINK_LIBRARIES(file_parser ${YARP_LIBRARIES} icubmod ${ICUB_LIBRARIES})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}_file_parser ${YARP_LIBRARIES} icubmod ${ICUB_LIBRARIES})
 
 SET(definitionsYarpInterface USE_POSITION_CONTROL_LEFT_ARM=true USE_POSITION_CONTROL_RIGHT_ARM=true)
-SET_TARGET_PROPERTIES(yarp_interface PROPERTIES
+SET_TARGET_PROPERTIES(${PROJECT_NAME}_yarp_interface PROPERTIES
                 COMPILE_DEFINITIONS "${definitionsYarpInterface}")
-TARGET_LINK_LIBRARIES(yarp_interface ${YARP_LIBRARIES} icubmod ${ICUB_LIBRARIES})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}_yarp_interface ${YARP_LIBRARIES} icubmod ${ICUB_LIBRARIES})
 
-TARGET_LINK_LIBRARIES(simple_homing_lib yarp_interface file_parser ${YARP_LIBRARIES} icubmod ${ICUB_LIBRARIES})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}_lib 	${PROJECT_NAME}_yarp_interface 
+											${PROJECT_NAME}_file_parser 
+											${YARP_LIBRARIES} icubmod ${ICUB_LIBRARIES})
 
-TARGET_LINK_LIBRARIES(simple_homing simple_homing_lib yarp_interface file_parser ${YARP_LIBRARIES} icubmod ${ICUB_LIBRARIES})
+TARGET_LINK_LIBRARIES(simple_homing ${PROJECT_NAME}_lib 
+									${PROJECT_NAME}_yarp_interface 
+									${PROJECT_NAME}_file_parser 
+									${YARP_LIBRARIES} icubmod ${ICUB_LIBRARIES})
 
 add_custom_command(TARGET simple_homing POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
