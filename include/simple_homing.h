@@ -7,7 +7,7 @@
 #include "file_parser.h"
 
 #define DEFAULT_MAX_VEL 50.0 //[deg/sec]
-#define PRECISION 1.0 //[deg]
+#define PRECISION 0.1 //[deg]
 
 using namespace yarp::sig;
 
