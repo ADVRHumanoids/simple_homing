@@ -41,7 +41,7 @@ TARGET_LINK_LIBRARIES(simple_homing ${PROJECT_NAME}_lib
 									${PROJECT_NAME}_file_parser 
 									${YARP_LIBRARIES} icubmod ${ICUB_LIBRARIES})
 
-add_custom_command(TARGET simple_homing POST_BUILD
+add_custom_target(  copy_conf_files_to_build ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${PROJECT_SOURCE_DIR}/app/conf"
         "${CMAKE_BINARY_DIR}/")
