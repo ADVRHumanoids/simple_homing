@@ -43,6 +43,7 @@ public:
         max_vel = DEFAULT_MAX_VEL; //[deg/sec]
 
         _period = period;
+        std::cout<<"Control Rate is: "<<_period*1000.0<<" [ms]"<<std::endl;
         max_q_increment = max_vel*_period; //[deg]
 
         set_init_config = false;
