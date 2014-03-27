@@ -20,13 +20,8 @@ public:
         parser(argc, argv)
     {
         int torso_dofs;
-//        iYarp.encodersMotor_torso->getAxes(&torso_dofs);
         int left_arm_dofs, right_arm_dofs;
-//        iYarp.encodersMotor_left_arm->getAxes(&left_arm_dofs);
- //       iYarp.encodersMotor_right_arm->getAxes(&right_arm_dofs);
         int left_leg_dofs, right_leg_dofs;
-//        iYarp.encodersMotor_left_leg->getAxes(&left_leg_dofs);
- //       iYarp.encodersMotor_right_leg->getAxes(&right_leg_dofs);
 
         q_torso.resize(iYarp.torso.getNumberOfJoints(),0.0);
         q_left_arm.resize(iYarp.left_arm.getNumberOfJoints(),0.0);

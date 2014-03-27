@@ -77,44 +77,15 @@ void simple_homing::run()
              controlAndMove(iYarp.right_leg,right_leg_homing,max_q_increment,q_right_leg);
              controlAndMove(iYarp.left_arm,left_arm_homing,max_q_increment,q_left_arm);
              controlAndMove(iYarp.left_leg,left_leg_homing,max_q_increment,q_left_leg);
-            
-            /*
-            if(iYarp.torso.isAvailable){
-                controlLaw(torso_homing, max_q_increment, q_torso);
-                iYarp.fillBottleAndSend(q_torso, iYarp.torso);
-                iYarp.moveKinematicChain(q_torso, iYarp.torso);
-            }
-            if(iYarp.isLeftArmAvailable){
-                controlLaw(left_arm_homing, max_q_increment, q_left_arm);
-                iYarp.fillBottleAndSend(q_left_arm, "left_arm");
-                iYarp.moveKinematicChain(q_left_arm, "left_arm");
-            }
-            if(iYarp.isRightArmAvailable){
-                controlLaw(right_arm_homing, max_q_increment, q_right_arm);
-                iYarp.fillBottleAndSend(q_right_arm, "right_arm");
-                iYarp.moveKinematicChain(q_right_arm, "right_arm");
-            }
-            if(iYarp.isLeftLegAvailable){
-                controlLaw(left_leg_homing, max_q_increment, q_left_leg);
-                iYarp.fillBottleAndSend(q_left_leg, "left_leg");
-                iYarp.moveKinematicChain(q_left_leg, "left_leg");
-
-            }
-            if(iYarp.isRightLegAvailable){
-                controlLaw(right_leg_homing, max_q_increment, q_right_leg);
-                iYarp.fillBottleAndSend(q_right_leg, "right_leg");
-                iYarp.moveKinematicChain(q_right_leg, "right_leg");
-            }*/
-
         }
     }
 
-    if((double)_t_counter_sending*_t_period >= SENDING_TIMING)
-    {
-        iYarp.fillStatusBottleAndSend(computeStatus());
-        _t_counter_sending = 0;
-    }
-
-    _t_counter_sending++;
+//     if((double)_t_counter_sending*_t_period >= SENDING_TIMING)
+//     {
+        iYarp.status.setStatus(computeStatus());
+//         _t_counter_sending = 0;
+//     }
+// 
+//     _t_counter_sending++;
     _t_counter_reading++;
 }

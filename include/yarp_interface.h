@@ -6,6 +6,7 @@
 #include <vector>
 
 #include <drc_shared/yarp_single_chain_interface.h>
+#include <drc_shared/yarp_status_interface.h>
 
 class yarp_interface
 {
@@ -13,37 +14,13 @@ public:
     yarp_interface();
     ~yarp_interface();
     walkman::drc::yarp_single_chain_interface left_leg,left_arm,right_leg,right_arm,torso;
-    
+    walkman::drc::yarp_status_interface status;
     bool sendTrj() {return send_trj;}
-
-    static const char * kinematic_chains;
-   /* yarp::dev::IEncodersTimed *encodersMotor_torso;
-    yarp::dev::IEncodersTimed *encodersMotor_left_arm;
-    yarp::dev::IEncodersTimed *encodersMotor_right_arm;
-    yarp::dev::IEncodersTimed *encodersMotor_left_leg;
-    yarp::dev::IEncodersTimed *encodersMotor_right_leg;
-    yarp::dev::IPositionDirect *positionControl_torso;
-    yarp::dev::IPositionDirect *positionControl_left_arm;
-    yarp::dev::IPositionDirect *positionControl_right_arm;
-    yarp::dev::IPositionDirect *positionControl_left_leg;
-    yarp::dev::IPositionDirect *positionControl_right_leg;
-    yarp::dev::IControlMode *controlMode_torso;
-    yarp::dev::IControlMode *controlMode_left_arm;
-    yarp::dev::IControlMode *controlMode_right_arm;
-    yarp::dev::IControlMode *controlMode_left_leg;
-    yarp::dev::IControlMode *controlMode_right_leg;
-    bool isTorsoAvailable;
-    bool isLeftArmAvailable;
-    bool isRightArmAvailable;
-    bool isLeftLegAvailable;
-    bool isRightLegAvailable;*/
-
     void checkInput();
     void stop() {send_trj = false;}
     void fillBottleAndSend(const yarp::sig::Vector& q_d, const std::string& kinematic_chain);
-    void fillStatusBottleAndSend(const std::string& status);
+    //void fillStatusBottleAndSend(const std::string& status);
     void setPositionControlModeKinematicChain(walkman::drc::yarp_single_chain_interface& chain);
-    void moveKinematicChain(const yarp::sig::Vector& q_d, const std::string& kinematic_chain);
 
 private:
     yarp::dev::PolyDriver polyDriver_torso;
@@ -61,7 +38,6 @@ private:
     yarp::os::Port left_leg_configuration_ref_port;
     yarp::os::Port status_port;
 
-    bool createPolyDriver(const std::string &kinematic_chain, yarp::dev::PolyDriver &polyDriver);
 };
 
 #endif
