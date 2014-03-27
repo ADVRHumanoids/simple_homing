@@ -20,19 +20,19 @@ public:
         parser(argc, argv)
     {
         int torso_dofs;
-        iYarp.encodersMotor_torso->getAxes(&torso_dofs);
+//        iYarp.encodersMotor_torso->getAxes(&torso_dofs);
         int left_arm_dofs, right_arm_dofs;
-        iYarp.encodersMotor_left_arm->getAxes(&left_arm_dofs);
-        iYarp.encodersMotor_right_arm->getAxes(&right_arm_dofs);
+//        iYarp.encodersMotor_left_arm->getAxes(&left_arm_dofs);
+ //       iYarp.encodersMotor_right_arm->getAxes(&right_arm_dofs);
         int left_leg_dofs, right_leg_dofs;
-        iYarp.encodersMotor_left_leg->getAxes(&left_leg_dofs);
-        iYarp.encodersMotor_right_leg->getAxes(&right_leg_dofs);
+//        iYarp.encodersMotor_left_leg->getAxes(&left_leg_dofs);
+ //       iYarp.encodersMotor_right_leg->getAxes(&right_leg_dofs);
 
-        q_torso.resize(torso_dofs,0.0);
-        q_left_arm.resize(left_arm_dofs,0.0);
-        q_right_arm.resize(right_arm_dofs,0.0);
-        q_left_leg.resize(left_leg_dofs,0.0);
-        q_right_leg.resize(right_leg_dofs,0.0);
+        q_torso.resize(iYarp.torso.getNumberOfJoints(),0.0);
+        q_left_arm.resize(iYarp.left_arm.getNumberOfJoints(),0.0);
+        q_right_arm.resize(iYarp.right_arm.getNumberOfJoints(),0.0);
+        q_left_leg.resize(iYarp.left_leg.getNumberOfJoints(),0.0);
+        q_right_leg.resize(iYarp.right_leg.getNumberOfJoints(),0.0);
 
         torso_homing.resize(q_torso.size(),0.0);
         left_arm_homing.resize(q_left_arm.size(),0.0);
@@ -102,7 +102,8 @@ private:
             q[i] += delta_q[i];
         }
     }
-
+    void controlAndMove(walkman::drc::yarp_single_chain_interface& chain, Vector& q_homing, double max_q_increment, Vector q);
+    
     std::string computeStatus()
     {
         if(iYarp.sendTrj())
@@ -114,11 +115,11 @@ private:
             Vector q_lleg(q_left_leg.size());
             Vector q_rleg(q_right_leg.size());
             Vector q_t(q_torso.size());
-            iYarp.encodersMotor_torso->getEncoders(q_t.data());
-            iYarp.encodersMotor_left_arm->getEncoders(q_larm.data());
-            iYarp.encodersMotor_right_arm->getEncoders(q_rarm.data());
-            iYarp.encodersMotor_left_leg->getEncoders(q_lleg.data());
-            iYarp.encodersMotor_right_leg->getEncoders(q_rleg.data());
+            iYarp.torso.sense(q_t);
+            iYarp.left_arm.sense(q_larm);
+            iYarp.right_arm.sense(q_rarm);
+            iYarp.left_leg.sense(q_lleg);
+            iYarp.right_leg.sense(q_rleg);
             if(checkGoal(q_larm, left_arm_homing) &&
                checkGoal(q_rarm, right_arm_homing) &&
                checkGoal(q_lleg, left_leg_homing) &&

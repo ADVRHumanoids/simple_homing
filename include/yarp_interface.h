@@ -5,17 +5,19 @@
 #include <yarp/dev/all.h>
 #include <vector>
 
+#include <drc_shared/yarp_single_chain_interface.h>
 
 class yarp_interface
 {
 public:
     yarp_interface();
     ~yarp_interface();
-
+    walkman::drc::yarp_single_chain_interface left_leg,left_arm,right_leg,right_arm,torso;
+    
     bool sendTrj() {return send_trj;}
 
     static const char * kinematic_chains;
-    yarp::dev::IEncodersTimed *encodersMotor_torso;
+   /* yarp::dev::IEncodersTimed *encodersMotor_torso;
     yarp::dev::IEncodersTimed *encodersMotor_left_arm;
     yarp::dev::IEncodersTimed *encodersMotor_right_arm;
     yarp::dev::IEncodersTimed *encodersMotor_left_leg;
@@ -34,13 +36,13 @@ public:
     bool isLeftArmAvailable;
     bool isRightArmAvailable;
     bool isLeftLegAvailable;
-    bool isRightLegAvailable;
+    bool isRightLegAvailable;*/
 
     void checkInput();
     void stop() {send_trj = false;}
     void fillBottleAndSend(const yarp::sig::Vector& q_d, const std::string& kinematic_chain);
     void fillStatusBottleAndSend(const std::string& status);
-    void setPositionControlModeKinematicChain(const std::string& kinematic_chain);
+    void setPositionControlModeKinematicChain(walkman::drc::yarp_single_chain_interface& chain);
     void moveKinematicChain(const yarp::sig::Vector& q_d, const std::string& kinematic_chain);
 
 private:

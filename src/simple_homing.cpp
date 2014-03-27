@@ -32,6 +32,15 @@ bool simple_homing::threadInit()
     return true;
 }
 
+void simple_homing::controlAndMove(walkman::drc::yarp_single_chain_interface& chain,yarp::sig::Vector& q_homing,double max_q_increment,yarp::sig::Vector q)
+{
+    if(chain.isAvailable){
+        controlLaw(q_homing, max_q_increment, q);
+        iYarp.fillBottleAndSend(q, chain.getChainName());
+        chain.move(q);
+    }
+}
+
 void simple_homing::run()
 {   
     if((double)_t_counter_reading*_t_period >= READING_TIMING)
@@ -43,11 +52,11 @@ void simple_homing::run()
     if(iYarp.sendTrj())
     {
         if(!set_init_config){
-            iYarp.encodersMotor_torso->getEncoders(q_torso.data());
-            iYarp.encodersMotor_left_arm->getEncoders(q_left_arm.data());
-            iYarp.encodersMotor_right_arm->getEncoders(q_right_arm.data());
-            iYarp.encodersMotor_left_leg->getEncoders(q_left_leg.data());
-            iYarp.encodersMotor_right_leg->getEncoders(q_right_leg.data());
+            iYarp.torso.encodersMotor->getEncoders(q_torso.data());
+            iYarp.left_arm.encodersMotor->getEncoders(q_left_arm.data());
+            iYarp.right_arm.encodersMotor->getEncoders(q_right_arm.data());
+            iYarp.left_leg.encodersMotor->getEncoders(q_left_leg.data());
+            iYarp.right_leg.encodersMotor->getEncoders(q_right_leg.data());
             set_init_config = true;
         }
 
@@ -63,10 +72,17 @@ void simple_homing::run()
         }
         else
         {
-            if(iYarp.isTorsoAvailable){
+            controlAndMove(iYarp.torso,torso_homing,max_q_increment,q_torso);
+            controlAndMove(iYarp.right_arm,right_arm_homing,max_q_increment,q_right_arm);
+            controlAndMove(iYarp.right_leg,right_leg_homing,max_q_increment,q_right_leg);
+            controlAndMove(iYarp.left_arm,left_arm_homing,max_q_increment,q_left_arm);
+            controlAndMove(iYarp.left_leg,left_leg_homing,max_q_increment,q_left_leg);
+            
+            /*
+            if(iYarp.torso.isAvailable){
                 controlLaw(torso_homing, max_q_increment, q_torso);
-                iYarp.fillBottleAndSend(q_torso, "torso");
-                iYarp.moveKinematicChain(q_torso, "torso");
+                iYarp.fillBottleAndSend(q_torso, iYarp.torso);
+                iYarp.moveKinematicChain(q_torso, iYarp.torso);
             }
             if(iYarp.isLeftArmAvailable){
                 controlLaw(left_arm_homing, max_q_increment, q_left_arm);
@@ -88,7 +104,7 @@ void simple_homing::run()
                 controlLaw(right_leg_homing, max_q_increment, q_right_leg);
                 iYarp.fillBottleAndSend(q_right_leg, "right_leg");
                 iYarp.moveKinematicChain(q_right_leg, "right_leg");
-            }
+            }*/
 
         }
     }

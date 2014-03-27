@@ -7,9 +7,17 @@
 //#define USE_POSITION_CONTROL_LEFT_ARM true
 //#define USE_POSITION_CONTROL_RIGHT_ARM true
 
-yarp_interface::yarp_interface()
+using namespace walkman::drc;
+
+yarp_interface::yarp_interface():left_leg("left_leg","simple_homing"),left_arm("left_arm","simple_homing"),right_leg("right_leg","simple_homing"),right_arm("right_arm","simple_homing"),torso("torso","simple_homing")
 {
-    isTorsoAvailable = false;
+    torso_configuration_ref_port.open("/simple_homing/torso/reference:o");
+    left_arm_configuration_ref_port.open("/simple_homing/left_arm/reference:o");
+    left_leg_configuration_ref_port.open("/simple_homing/left_leg/reference:o");
+    right_arm_configuration_ref_port.open("/simple_homing/right_arm/reference:o");
+    right_leg_configuration_ref_port.open("/simple_homing/right_leg/reference:o");
+    
+/*    isTorsoAvailable = false;
     isLeftArmAvailable = false;
     isRightArmAvailable = false;
     isLeftLegAvailable = false;
@@ -55,7 +63,7 @@ yarp_interface::yarp_interface()
         right_leg_configuration_ref_port.open("/simple_homing/right_leg/reference:o");
         isRightLegAvailable = true;
     }
-
+*/
     send_trj = false;
     set_position_mode = false;
 
@@ -72,18 +80,18 @@ void yarp_interface::checkInput()
 
     if(send_trj && !set_position_mode)
     {
-        setPositionControlModeKinematicChain("torso");
-        setPositionControlModeKinematicChain("left_arm");
-        setPositionControlModeKinematicChain("right_arm");
-        setPositionControlModeKinematicChain("left_leg");
-        setPositionControlModeKinematicChain("right_leg");
+        setPositionControlModeKinematicChain(torso);
+        setPositionControlModeKinematicChain(left_arm);
+        setPositionControlModeKinematicChain(right_arm);
+        setPositionControlModeKinematicChain(left_leg);
+        setPositionControlModeKinematicChain(right_leg);
         set_position_mode = true;
     }
 }
 
 yarp_interface::~yarp_interface()
 {
-    if(polyDriver_torso.isValid())
+   /* if(polyDriver_torso.isValid())
         polyDriver_torso.close();
     if(polyDriver_left_arm.isValid())
         polyDriver_left_arm.close();
@@ -92,7 +100,7 @@ yarp_interface::~yarp_interface()
     if(polyDriver_left_leg.isValid())
         polyDriver_left_leg.close();
     if(polyDriver_right_leg.isValid())
-        polyDriver_right_leg.close();
+        polyDriver_right_leg.close();*/
     port_send_trj.close();
     right_arm_configuration_ref_port.close();
     left_arm_configuration_ref_port.close();
@@ -101,7 +109,7 @@ yarp_interface::~yarp_interface()
     left_leg_configuration_ref_port.close();
 }
 
-bool yarp_interface::createPolyDriver(const std::string& kinematic_chain, yarp::dev::PolyDriver& polyDriver)
+/*bool yarp_interface::createPolyDriver(const std::string& kinematic_chain, yarp::dev::PolyDriver& polyDriver)
 {
     yarp::os::Property options;
     options.put("robot", "coman");
@@ -124,7 +132,7 @@ bool yarp_interface::createPolyDriver(const std::string& kinematic_chain, yarp::
         std::cout<<"Device "<<kinematic_chain<<" available."<<std::endl;
         return true;
     }
-}
+}*/
 
 void yarp_interface::fillBottleAndSend(const yarp::sig::Vector &q_d, const std::string &kinematic_chain)
 {
@@ -151,7 +159,7 @@ void yarp_interface::fillStatusBottleAndSend(const std::string &status)
     status_port.write(bot);
 }
 
-void yarp_interface::moveKinematicChain(const yarp::sig::Vector &q_d, const std::string &kinematic_chain)
+/*void yarp_interface::moveKinematicChain(const yarp::sig::Vector &q_d, const std::string &kinematic_chain)
 {
     if(kinematic_chain.compare("torso") == 0)
         if(!positionControl_torso->setPositions(q_d.data()))
@@ -172,11 +180,14 @@ void yarp_interface::moveKinematicChain(const yarp::sig::Vector &q_d, const std:
     if(kinematic_chain.compare("right_leg") == 0)
         if(!positionControl_right_leg->setPositions(q_d.data()))
             std::cout<<"Cannot move right_leg using Direct Position Ctrl"<<std::cout;
-}
+}*/
 
-void yarp_interface::setPositionControlModeKinematicChain(const std::string &kinematic_chain)
+void yarp_interface::setPositionControlModeKinematicChain(yarp_single_chain_interface& chain)
 {
-    int number_of_joints = 0;
+    for(unsigned int i = 0; i < chain.getNumberOfJoints(); i++)
+        chain.controlMode->setPositionMode(i);
+
+/*    int number_of_joints = 0;
     if(kinematic_chain.compare("torso") == 0)
     {
         encodersMotor_torso->getAxes(&number_of_joints);
@@ -210,5 +221,5 @@ void yarp_interface::setPositionControlModeKinematicChain(const std::string &kin
         encodersMotor_right_leg->getAxes(&number_of_joints);
         for(unsigned int i = 0; i < number_of_joints; ++i)
             controlMode_right_leg->setPositionMode(i);
-    }
+    }*/
 }
