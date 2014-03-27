@@ -35,13 +35,8 @@ bool simple_homing::threadInit()
 void simple_homing::controlAndMove(walkman::drc::yarp_single_chain_interface& chain,yarp::sig::Vector& q_homing,double max_q_increment,yarp::sig::Vector& q)
 {
     if(chain.isAvailable){
-        std::cout<<"H"<<q_homing.toString()<<std::endl;
-        std::cout<<"B"<<q.toString()<<std::endl;
-        
         controlLaw(q_homing, max_q_increment, q);
-        iYarp.fillBottleAndSend(q, chain.getChainName());
-        std::cout<<"A"<<q.toString()<<std::endl;
-        
+        iYarp.fillBottleAndSend(q, chain.getChainName());        
         chain.move(q);
     }
 }
