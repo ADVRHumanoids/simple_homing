@@ -12,7 +12,7 @@ using namespace walkman::drc;
 
 yarp_interface::yarp_interface():left_leg("left_leg","simple_homing"),left_arm("left_arm","simple_homing"),
 right_leg("right_leg","simple_homing"),right_arm("right_arm","simple_homing"),torso("torso","simple_homing"),
-status("simple_homing")
+status("simple_homing"),commands("simple_homing")
 {
     torso_configuration_ref_port.open("/simple_homing/torso/reference:o");
     left_arm_configuration_ref_port.open("/simple_homing/left_arm/reference:o");
@@ -23,18 +23,24 @@ status("simple_homing")
     send_trj = false;
     set_position_mode = false;
 
-    port_send_trj.open("/simple_homing/do_homing:i");
+    //port_send_trj.open("/simple_homing/do_homing:i");
     status.start();
 //     status_port.open("/simple_homing/status:o");
 }
 
 void yarp_interface::checkInput()
 {
-    yarp::os::Bottle* bot_send_trj = port_send_trj.read(false);
-    if(bot_send_trj != NULL){
-        send_trj = (bool)bot_send_trj->get(0).asInt();
-        set_position_mode = false;}
-
+   int command;
+   if (commands.getCommand(command))
+   {
+       send_trj=(command>0);
+       set_position_mode=false;
+   }
+//     yarp::os::Bottle* bot_send_trj = port_send_trj.read(false);
+//     if(bot_send_trj != NULL){
+//         send_trj = (bool)bot_send_trj->get(0).asInt();
+//         set_position_mode = false;}
+    
     if(send_trj && !set_position_mode)
     {
         setPositionControlModeKinematicChain(torso);
@@ -48,7 +54,7 @@ void yarp_interface::checkInput()
 
 yarp_interface::~yarp_interface()
 {
-    port_send_trj.close();
+    //port_send_trj.close();
     right_arm_configuration_ref_port.close();
     left_arm_configuration_ref_port.close();
     torso_configuration_ref_port.close();
@@ -74,12 +80,6 @@ void yarp_interface::fillBottleAndSend(const yarp::sig::Vector &q_d, const std::
         right_leg_configuration_ref_port.write(bot);
 }
 
-// void yarp_interface::fillStatusBottleAndSend(const std::string &status)
-// {
-//     yarp::os::Bottle bot;
-//     bot.addString(status.c_str());
-//     status_port.write(bot);
-// }
 
 void yarp_interface::setPositionControlModeKinematicChain(yarp_single_chain_interface& chain)
 {
