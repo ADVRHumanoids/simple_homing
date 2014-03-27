@@ -184,8 +184,8 @@ void yarp_interface::fillStatusBottleAndSend(const std::string &status)
 
 void yarp_interface::setPositionControlModeKinematicChain(yarp_single_chain_interface& chain)
 {
-    for(unsigned int i = 0; i < chain.getNumberOfJoints(); i++)
-        chain.controlMode->setPositionMode(i);
+     for(int i = 0; i < chain.getNumberOfJoints(); i++)
+         chain.controlMode->setPositionMode(i);
 
 /*    int number_of_joints = 0;
     if(kinematic_chain.compare("torso") == 0)

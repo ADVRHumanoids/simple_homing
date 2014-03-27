@@ -32,11 +32,16 @@ bool simple_homing::threadInit()
     return true;
 }
 
-void simple_homing::controlAndMove(walkman::drc::yarp_single_chain_interface& chain,yarp::sig::Vector& q_homing,double max_q_increment,yarp::sig::Vector q)
+void simple_homing::controlAndMove(walkman::drc::yarp_single_chain_interface& chain,yarp::sig::Vector& q_homing,double max_q_increment,yarp::sig::Vector& q)
 {
     if(chain.isAvailable){
+        std::cout<<"H"<<q_homing.toString()<<std::endl;
+        std::cout<<"B"<<q.toString()<<std::endl;
+        
         controlLaw(q_homing, max_q_increment, q);
         iYarp.fillBottleAndSend(q, chain.getChainName());
+        std::cout<<"A"<<q.toString()<<std::endl;
+        
         chain.move(q);
     }
 }
@@ -73,10 +78,10 @@ void simple_homing::run()
         else
         {
             controlAndMove(iYarp.torso,torso_homing,max_q_increment,q_torso);
-            controlAndMove(iYarp.right_arm,right_arm_homing,max_q_increment,q_right_arm);
-            controlAndMove(iYarp.right_leg,right_leg_homing,max_q_increment,q_right_leg);
-            controlAndMove(iYarp.left_arm,left_arm_homing,max_q_increment,q_left_arm);
-            controlAndMove(iYarp.left_leg,left_leg_homing,max_q_increment,q_left_leg);
+             controlAndMove(iYarp.right_arm,right_arm_homing,max_q_increment,q_right_arm);
+             controlAndMove(iYarp.right_leg,right_leg_homing,max_q_increment,q_right_leg);
+             controlAndMove(iYarp.left_arm,left_arm_homing,max_q_increment,q_left_arm);
+             controlAndMove(iYarp.left_leg,left_leg_homing,max_q_increment,q_left_leg);
             
             /*
             if(iYarp.torso.isAvailable){

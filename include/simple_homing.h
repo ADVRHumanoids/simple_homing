@@ -102,7 +102,7 @@ private:
             q[i] += delta_q[i];
         }
     }
-    void controlAndMove(walkman::drc::yarp_single_chain_interface& chain, Vector& q_homing, double max_q_increment, Vector q);
+    void controlAndMove(walkman::drc::yarp_single_chain_interface& chain, Vector& q_homing, double max_q_increment, Vector& q);
     
     std::string computeStatus()
     {
