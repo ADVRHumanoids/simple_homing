@@ -43,11 +43,20 @@ void yarp_interface::checkInput()
     
     if(send_trj && !set_position_mode)
     {
-        setPositionControlModeKinematicChain(torso);
-        setPositionControlModeKinematicChain(left_arm);
-        setPositionControlModeKinematicChain(right_arm);
+        /// Lower Body runs in Position
+        //setPositionControlModeKinematicChain(torso);
+        //setPositionControlModeKinematicChain(left_arm);
+        //setPositionControlModeKinematicChain(right_arm);
         setPositionControlModeKinematicChain(left_leg);
         setPositionControlModeKinematicChain(right_leg);
+
+        /// Upper Body runs in Impedance
+        setImpedanceControlModeKinematicChain(torso);
+        setImpedanceControlModeKinematicChain(left_arm);
+        setImpedanceControlModeKinematicChain(right_arm);
+        //setImpedanceControlModeKinematicChain(left_leg);
+        //setImpedanceControlModeKinematicChain(right_leg);
+
         set_position_mode = true;
     }
 }
@@ -85,4 +94,10 @@ void yarp_interface::setPositionControlModeKinematicChain(yarp_single_chain_inte
 {
      for(int i = 0; i < chain.getNumberOfJoints(); i++)
          chain.controlMode->setPositionMode(i);
+}
+
+void yarp_interface::setImpedanceControlModeKinematicChain(walkman::drc::yarp_single_chain_interface& chain)
+{
+    for(unsigned int i = 0; i < chain.getNumberOfJoints(); ++i)
+        chain.controlMode->setImpedancePositionMode(i);
 }

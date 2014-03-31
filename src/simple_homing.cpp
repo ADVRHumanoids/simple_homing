@@ -72,7 +72,7 @@ void simple_homing::run()
         }
         else
         {
-            controlAndMove(iYarp.torso,torso_homing,max_q_increment,q_torso);
+             controlAndMove(iYarp.torso,torso_homing,max_q_increment,q_torso);
              controlAndMove(iYarp.right_arm,right_arm_homing,max_q_increment,q_right_arm);
              controlAndMove(iYarp.right_leg,right_leg_homing,max_q_increment,q_right_leg);
              controlAndMove(iYarp.left_arm,left_arm_homing,max_q_increment,q_left_arm);

@@ -22,6 +22,7 @@ public:
     void stop() {send_trj = false;}
     void fillBottleAndSend(const yarp::sig::Vector& q_d, const std::string& kinematic_chain);
     void setPositionControlModeKinematicChain(walkman::drc::yarp_single_chain_interface& chain);
+    void setImpedanceControlModeKinematicChain(walkman::drc::yarp_single_chain_interface& chain);
 
 private:
     bool send_trj;
