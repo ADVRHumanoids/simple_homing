@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 cmake_policy(SET CMP0005 OLD)
-set(CMAKE_CXX_FLAGS "-std=c++0x") # -g for debugging 
+set(CMAKE_CXX_FLAGS "-std=c++11") # -g for debugging 
 
 PROJECT(simple_homing)
 
