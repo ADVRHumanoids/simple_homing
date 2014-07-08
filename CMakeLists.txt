@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 cmake_policy(SET CMP0005 OLD)
 
+
 project(simple_homing)
 
 include(CheckCXXCompilerFlag)
@@ -16,7 +17,7 @@ endif()
 
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}")
-
+SET(ROS_HYDRO_LIB_FOLDER /opt/ros/hydro/lib/)
 
 FIND_PACKAGE(YARP REQUIRED)
 FIND_PACKAGE(ICUB REQUIRED)
@@ -25,6 +26,7 @@ FIND_PACKAGE(drc_shared REQUIRED)
 
 # add include directories
 INCLUDE_DIRECTORIES(include ${YARP_INCLUDE_DIRS} ${ICUB_INCLUDE_DIRS} ${Eigen_INCLUDE_DIRS})
+LINK_DIRECTORIES(${ROS_HYDRO_LIB_FOLDER})
 
 # add required linker flags
 SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${ICUB_LINK_FLAGS}")              
