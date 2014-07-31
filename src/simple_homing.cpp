@@ -52,11 +52,11 @@ void simple_homing::run()
     if(iYarp.sendTrj())
     {
         if(!set_init_config){
-            iYarp.torso.encodersMotor->getEncoders(q_torso.data());
-            iYarp.left_arm.encodersMotor->getEncoders(q_left_arm.data());
-            iYarp.right_arm.encodersMotor->getEncoders(q_right_arm.data());
-            iYarp.left_leg.encodersMotor->getEncoders(q_left_leg.data());
-            iYarp.right_leg.encodersMotor->getEncoders(q_right_leg.data());
+//             iYarp.torso.encodersMotor->getEncoders(q_torso.data());
+//             iYarp.left_arm.encodersMotor->getEncoders(q_left_arm.data());
+//             iYarp.right_arm.encodersMotor->getEncoders(q_right_arm.data());
+//             iYarp.left_leg.encodersMotor->getEncoders(q_left_leg.data());
+//             iYarp.right_leg.encodersMotor->getEncoders(q_right_leg.data());
             set_init_config = true;
         }
 

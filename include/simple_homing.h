@@ -101,6 +101,7 @@ private:
     
     std::string computeStatus()
     {
+        return "moving";
         if(iYarp.sendTrj())
             return "moving";
         else
