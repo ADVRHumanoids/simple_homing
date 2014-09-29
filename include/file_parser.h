@@ -10,6 +10,7 @@ class file_parser
 public:
     file_parser();
     file_parser(int argc, char* argv[]);
+    file_parser(yarp::os::ResourceFinder rf);
     ~file_parser();
 
     bool getConfiguration(const std::string &chain_name, yarp::sig::Vector& home_configuration);

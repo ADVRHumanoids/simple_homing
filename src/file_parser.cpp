@@ -33,6 +33,11 @@ file_parser::file_parser(int argc, char *argv[]):
     _config_file.configure("",argc,argv);
 }
 
+file_parser::file_parser(yarp::os::ResourceFinder rf) : _config_file( rf )
+{
+}
+
+
 file_parser::~file_parser()
 {
 

@@ -1,47 +1,32 @@
 #include <yarp/os/all.h>
+#include <drc_shared/generic_module.hpp>
 #include "simple_homing.h"
 
-#define dT 0.01 //[s]
-
-class simple_homing_module: public yarp::os::RFModule
-{
-protected:
-    simple_homing* thr;
-public:
-    bool my_configure(int argc, char* argv[])
-    {
-        thr = new simple_homing(dT, argc, argv);
-        if(!thr->start())
-        {
-            delete thr;
-            return false;
-        }
-        std::cout<<"Starting Module"<<std::endl;
-        return true;
-    }
-
-    virtual bool close()
-    {
-        thr->stop();
-        delete thr;
-        return true;
-    }
-
-    virtual double getPeriod(){return 1.0;}
-    virtual bool updateModule(){return true;}
-};
+#define MODULE_PERIOD 1000//[millisec]
 
 int main(int argc, char* argv[])
 {
+    // yarp network declaration and check
     yarp::os::Network yarp;
     if(!yarp.checkNetwork()){
-        std::cout<<"yarpserver not running, pls run yarpserver"<<std::endl;
-        return 0;}
+        std::cerr <<"yarpserver not running - run yarpserver"<< std::endl;
+        exit(EXIT_FAILURE);
+    }
+    // yarp network initialization
     yarp.init();
 
-    simple_homing_module mod;
-    mod.my_configure(argc, argv);
-
+    //create rf
+    yarp::os::ResourceFinder rf;
+    rf.setVerbose(true);
+    rf.setDefaultConfigFile( "initial_config.ini" ); 
+    rf.setDefaultContext( "simple_homing" );  
+    rf.configure(argc, argv);
+    // create my module
+    generic_module<simple_homing> simple_homing_module = generic_module<simple_homing>( argc, argv, "simple_homing", MODULE_PERIOD, rf );
+    
+        
+    // yarp network deinitialization
     yarp.fini();
-    return mod.runModule();
+    //run the module
+    return simple_homing_module.runModule();
 }

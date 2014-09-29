@@ -1,14 +1,13 @@
 cmake_minimum_required(VERSION 2.8)
 cmake_policy(SET CMP0005 OLD)
 
-
 project(simple_homing)
 
 include(CheckCXXCompilerFlag)
 check_cxx_compiler_flag("-std=c++11" COMPILER_SUPPORTS_CXX11)
 check_cxx_compiler_flag("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
 if(COMPILER_SUPPORTS_CXX11)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g")
 elseif(COMPILER_SUPPORTS_CXX0X)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
 else()
@@ -22,14 +21,11 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}")
 FIND_PACKAGE(YARP REQUIRED)
 FIND_PACKAGE(Eigen REQUIRED)
 FIND_PACKAGE(drc_shared REQUIRED)
+FIND_PACKAGE(paramHelp REQUIRED)
 
 # add include directories
-INCLUDE_DIRECTORIES(include ${YARP_INCLUDE_DIRS} 
-${Eigen_INCLUDE_DIRS})
-LINK_DIRECTORIES(${ROS_LIB_FOLDER})
-
-# add required linker flags
-#SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")              
+INCLUDE_DIRECTORIES(include ${YARP_INCLUDE_DIRS} ${Eigen_INCLUDE_DIRS} ${drc_shared_INCLUDE_DIRS} ${paramHelp_INCLUDE_DIRS} )
+LINK_DIRECTORIES(${ROS_LIB_FOLDER} ${WALKMAN_LIB_FOLDER})
 
 if(COMMAND cmake_policy)
     cmake_policy(SET CMP0003 NEW)
@@ -46,16 +42,20 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME}_file_parser ${YARP_LIBRARIES} )
 SET(definitionsYarpInterface USE_POSITION_CONTROL_LEFT_ARM=true USE_POSITION_CONTROL_RIGHT_ARM=true)
 SET_TARGET_PROPERTIES(${PROJECT_NAME}_yarp_interface PROPERTIES
                 COMPILE_DEFINITIONS "${definitionsYarpInterface}")
-TARGET_LINK_LIBRARIES(${PROJECT_NAME}_yarp_interface ${YARP_LIBRARIES} ${drc_shared_LIBRARIES})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}_yarp_interface ${YARP_LIBRARIES} ${drc_shared_LIBRARIES} ${paramHelp_LIBRARIES})
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}_lib 	${PROJECT_NAME}_yarp_interface 
 						${PROJECT_NAME}_file_parser 
-						${YARP_LIBRARIES})
+						${YARP_LIBRARIES}
+						${drc_shared_LIBRARIES}
+						${paramHelp_LIBRARIES})
 
 TARGET_LINK_LIBRARIES(simple_homing ${PROJECT_NAME}_lib 
-									${PROJECT_NAME}_yarp_interface 
-									${PROJECT_NAME}_file_parser 
-									${YARP_LIBRARIES}
+                                    ${PROJECT_NAME}_yarp_interface 
+                                    ${PROJECT_NAME}_file_parser 
+                                    ${YARP_LIBRARIES}
+                                    ${drc_shared_LIBRARIES}
+                                    ${paramHelp_LIBRARIES}
 )
 
 add_custom_target(  copy_conf_files_to_build ALL
