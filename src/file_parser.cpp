@@ -61,7 +61,7 @@ bool file_parser::set_input_parameter(yarp::os::Property &_command_line)
 
 bool file_parser::getConfiguration(const std::string &chain_name, yarp::sig::Vector& home_configuration)
 {
-    yarp::os::Value configuration = _config_file.findGroup("HOMING").find(chain_name);
+    yarp::os::Value configuration = _config_file.find(chain_name);
 
     if(!configuration.isNull())
     {
@@ -81,7 +81,7 @@ bool file_parser::getConfiguration(const std::string &chain_name, yarp::sig::Vec
 
 bool file_parser::getMaxVelocity(double &max_velocity)
 {
-    yarp::os::Value max_vel = _config_file.findGroup("HOMING").find("max_vel");
+    yarp::os::Value max_vel = _config_file.find("max_vel");
 
     if(!max_vel.isNull())
     {
