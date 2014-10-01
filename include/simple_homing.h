@@ -5,7 +5,8 @@
 #include <yarp/sig/Vector.h>
 
 #include <drc_shared/yarp_single_chain_interface.h>
-#include<drc_shared/generic_thread.hpp>
+#include <drc_shared/yarp_command_interface.hpp>
+#include <drc_shared/generic_thread.hpp>
 
 #include "yarp_interface.h"
 #include "file_parser.h"
@@ -30,8 +31,8 @@ private:
     yarp::sig::Vector right_leg_homing;
     // max speed 
     double max_vel;
-    // port for the homing command
-    homing_cmd_port command_port;
+    // homing command
+    walkman::drc::yarp_command_interface command_interface;
 
     
     void control_and_move( walkman::drc::yarp_single_chain_interface& chain_interface, yarp::sig::Vector homing );

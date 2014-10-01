@@ -20,7 +20,7 @@ simple_homing::simple_homing(std::string module_prefix,
                                                                                     left_leg_homing( left_leg_chain_interface.getNumberOfJoints() ),
                                                                                     right_leg_homing( left_leg_chain_interface.getNumberOfJoints() ),
                                                                                     max_vel( DEFAULT_MAX_VEL ),
-                                                                                    command_port( true ),
+                                                                                    command_interface( module_prefix ),
                                                                                     generic_thread(module_prefix, rf, ph)
 {
 }
@@ -56,10 +56,6 @@ bool simple_homing::custom_init()
     ph->linkParam( PARAM_ID_LEFT_LEG, left_leg_homing.data() );
     ph->linkParam( PARAM_ID_RIGHT_LEG, right_leg_homing.data() );
     
-    // use the callback and open the command port
-    command_port.useCallback();
-    command_port.open( "/" + get_module_prefix() + "/command:i" );
-
     return true;
 }
 
@@ -81,7 +77,7 @@ void simple_homing::control_and_move( walkman::drc::yarp_single_chain_interface&
 void simple_homing::run()
 {   
     // if we have to go to homing position -> control and move all the chains as specified in the homing vectors
-    if( command_port.get_go_homing() ) {
+    if( command_interface.getCommand() == "homing" ) {
         // torso chain
         control_and_move( torso_chain_interface, torso_homing );
         // left_arm chain
@@ -93,7 +89,6 @@ void simple_homing::run()
         // right_leg chain
         control_and_move( right_leg_chain_interface, right_leg_homing );
         // we are in homing position
-        command_port.set_go_homing( false );
         std::cout << "Reached Home Position" << std::endl;
     }
 }
@@ -105,6 +100,5 @@ std::string simple_homing::computeStatus()
 
 void simple_homing::custom_release()
 {
-    command_port.close();
 }
 
