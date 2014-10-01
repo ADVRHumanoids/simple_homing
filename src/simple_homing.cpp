@@ -1,6 +1,8 @@
 #include <yarp/os/all.h>
 #include <stdlib.h>
+
 #include "simple_homing.h"
+#include "simple_homing_constants.h"
 
 #define DEFAULT_MAX_VEL 50.0 //[deg/sec]
 
@@ -18,7 +20,7 @@ simple_homing::simple_homing(std::string module_prefix,
                                                                                     left_leg_homing( left_leg_chain_interface.getNumberOfJoints() ),
                                                                                     right_leg_homing( left_leg_chain_interface.getNumberOfJoints() ),
                                                                                     max_vel( DEFAULT_MAX_VEL ),
-                                                                                    set_init_config( false ),
+                                                                                    command_port( true ),
                                                                                     generic_thread(module_prefix, rf, ph)
 {
 }
@@ -33,29 +35,35 @@ bool simple_homing::custom_init()
     pthread_setschedparam(pthread_self(), SCHED_FIFO, &thread_param);
     
     // initialize homing vectors
-    if( !parser.getConfiguration("torso", torso_homing) )
+    if( !parser.getConfiguration( "torso", torso_homing ) )
         std::cout << "Error loading torso homing. All zeros will be used." << std::endl;
-    if( !parser.getConfiguration("left_arm", left_arm_homing) )
+    if( !parser.getConfiguration( "left_arm", left_arm_homing ) )
         std::cout << "Error loading left_arm homing. All zeros will be used." << std::endl;
-    if( !parser.getConfiguration("right_arm", right_arm_homing) )
-        std::cout<<"Error loading right_arm homing. All zeros will be used."<<std::endl;
-    if( !parser.getConfiguration("left_leg", left_leg_homing) )
-        std::cout<<"Error loading left_leg homing. All zeros will be used."<<std::endl;
-    if( !parser.getConfiguration("right_leg", right_leg_homing) )
-        std::cout<<"Error loading right_leg homing. All zeros will be used."<<std::endl;
-    if( !parser.getMaxVelocity(max_vel) )
-        std::cout<<"Error loading max vel. "<< max_vel <<" [deg/sec] will be used."<<std::endl;
+    if( !parser.getConfiguration( "right_arm", right_arm_homing ) )
+        std::cout << "Error loading right_arm homing. All zeros will be used." << std::endl;
+    if( !parser.getConfiguration( "left_leg", left_leg_homing ) )
+        std::cout << "Error loading left_leg homing. All zeros will be used." << std::endl;
+    if( !parser.getConfiguration( "right_leg", right_leg_homing ) )
+        std::cout << "Error loading right_leg homing. All zeros will be used."<< std::endl;
+    if( !parser.getMaxVelocity( max_vel ) )
+        std::cout << "Error loading max vel. "<< max_vel <<" [deg/sec] will be used." << std::endl;
     
-    std::cout << torso_homing.toString() << std::endl;
-    
-    // param helper link param
+    // param helper link param for all the chains
     std::shared_ptr<paramHelp::ParamHelperServer> ph = get_param_helper();
     ph->linkParam( PARAM_ID_TORSO, torso_homing.data() );
+    ph->linkParam( PARAM_ID_LEFT_ARM, left_arm_homing.data() );
+    ph->linkParam( PARAM_ID_RIGHT_ARM, right_arm_homing.data() );
+    ph->linkParam( PARAM_ID_LEFT_LEG, left_leg_homing.data() );
+    ph->linkParam( PARAM_ID_RIGHT_LEG, right_leg_homing.data() );
+    
+    // use the callback and open the command port
+    command_port.useCallback();
+    command_port.open( "/" + get_module_prefix() + "/command:i" );
 
     return true;
 }
 
-void simple_homing::controlAndMove( walkman::drc::yarp_single_chain_interface& chain_interface, yarp::sig::Vector homing )
+void simple_homing::control_and_move( walkman::drc::yarp_single_chain_interface& chain_interface, yarp::sig::Vector homing )
 {
     // get joints number
     int num_joints = chain_interface.getNumberOfJoints();
@@ -72,13 +80,20 @@ void simple_homing::controlAndMove( walkman::drc::yarp_single_chain_interface& c
 
 void simple_homing::run()
 {   
-    if( !set_init_config ) {
-        controlAndMove( torso_chain_interface, torso_homing );
-        controlAndMove( left_arm_chain_interface, left_arm_homing );
-        controlAndMove( right_arm_chain_interface, right_arm_homing );
-        controlAndMove( left_leg_chain_interface, left_leg_homing );
-        controlAndMove( right_leg_chain_interface, right_leg_homing );
-        set_init_config = true;
+    // if we have to go to homing position -> control and move all the chains as specified in the homing vectors
+    if( command_port.get_go_homing() ) {
+        // torso chain
+        control_and_move( torso_chain_interface, torso_homing );
+        // left_arm chain
+        control_and_move( left_arm_chain_interface, left_arm_homing );
+        // right_arm chain
+        control_and_move( right_arm_chain_interface, right_arm_homing );
+        // left_leg chain
+        control_and_move( left_leg_chain_interface, left_leg_homing );
+        // right_leg chain
+        control_and_move( right_leg_chain_interface, right_leg_homing );
+        // we are in homing position
+        command_port.set_go_homing( false );
         std::cout << "Reached Home Position" << std::endl;
     }
 }
@@ -88,4 +103,8 @@ std::string simple_homing::computeStatus()
     return "status TODO";
 }
 
+void simple_homing::custom_release()
+{
+    command_port.close();
+}
 
