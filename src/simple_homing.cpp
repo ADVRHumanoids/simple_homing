@@ -93,12 +93,3 @@ void simple_homing::run()
     }
 }
 
-std::string simple_homing::computeStatus()
-{
-    return "status TODO";
-}
-
-void simple_homing::custom_release()
-{
-}
-

@@ -8,9 +8,7 @@
 #include <drc_shared/yarp_command_interface.hpp>
 #include <drc_shared/generic_thread.hpp>
 
-#include "yarp_interface.h"
 #include "file_parser.h"
-#include "homing_cmd_port.hpp"
 
 class simple_homing: public generic_thread
 {
@@ -36,7 +34,6 @@ private:
 
     
     void control_and_move( walkman::drc::yarp_single_chain_interface& chain_interface, yarp::sig::Vector homing );
-    std::string computeStatus();
     
 public:
     
@@ -45,7 +42,6 @@ public:
                    std::shared_ptr<paramHelp::ParamHelperServer> ph );
     virtual bool custom_init();
     virtual void run();
-    virtual void custom_release();
     
 };
 
