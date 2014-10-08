@@ -1,3 +1,6 @@
+#ifndef SIMPLE_HOMING_CONSTANTS_H_
+#define SIMPLE_HOMING_CONSTANTS_H_
+
 // param helper const
 // torso
 #define PARAM_ID_TORSO 0
@@ -14,3 +17,8 @@
 // right_leg
 #define PARAM_ID_RIGHT_LEG 4
 #define PARAM_SIZE_RIGHT_LEG 6
+// max_vel
+#define PARAM_ID_MAX_VEL 5
+#define PARAM_SIZE_MAX_VEL 1
+
+#endif

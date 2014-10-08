@@ -1,12 +1,22 @@
-#ifndef _SIMPLE_HOMING_MODULE_HPP
-#define _SIMPLE_HOMING_MODULE_HPP
+#ifndef SIMPLE_HOMING_MODULE_HPP_
+#define SIMPLE_HOMING_MODULE_HPP_
 
 #include <drc_shared/generic_module.hpp>
 #include "simple_homing.h"
 #include "simple_homing_constants.h"
 
+/**
+ * @brief simple_homing module derived from generic_module
+ * 
+ * @author Luca Muratore (luca.muratore@iit.it)
+ */
 class simple_homing_module : public generic_module<simple_homing> {
 public:
+    
+    /**
+     * @brief constructor: do nothing but construct the superclass
+     * 
+     */
     simple_homing_module(   int argc, 
                             char* argv[],
                             std::string module_prefix, 
@@ -19,6 +29,11 @@ public:
     {
     }
     
+    /**
+     * @brief overriden function to specify the custom params of the simple_homing for the param helper
+     * 
+     * @return a vector of the custom param of the simple_homing for the param helper
+     */
     virtual std::vector< paramHelp::ParamProxyInterface* > custom_get_ph_parameters() 
     {
         std::vector<paramHelp::ParamProxyInterface *> custom_params;
@@ -57,6 +72,13 @@ public:
                                                                             paramHelp::PARAM_IN_OUT, 
                                                                             NULL, 
                                                                             "right_leg homing configuration" ) );
+        // insert max_vel param
+        custom_params.push_back( new paramHelp::ParamProxyBasic<double>(    "max_vel", 
+                                                                            PARAM_ID_MAX_VEL, 
+                                                                            PARAM_SIZE_MAX_VEL, 
+                                                                            paramHelp::PARAM_IN_OUT, 
+                                                                            NULL, 
+                                                                            "maximum velocity in [degree/second]" ) );
         return custom_params;
     }
 };

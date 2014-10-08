@@ -4,12 +4,9 @@
 #include "simple_homing.h"
 #include "simple_homing_constants.h"
 
-#define DEFAULT_MAX_VEL 50.0 //[deg/sec]
-
 simple_homing::simple_homing(std::string module_prefix, 
                              yarp::os::ResourceFinder rf, 
-                             std::shared_ptr< paramHelp::ParamHelperServer > ph) :  parser( rf ),
-                                                                                    torso_chain_interface( "torso", module_prefix ),
+                             std::shared_ptr< paramHelp::ParamHelperServer > ph) :  torso_chain_interface( "torso", module_prefix ),
                                                                                     left_arm_chain_interface( "left_arm", module_prefix ),
                                                                                     right_arm_chain_interface( "right_arm", module_prefix ),
                                                                                     left_leg_chain_interface( "left_leg", module_prefix ),
@@ -19,13 +16,39 @@ simple_homing::simple_homing(std::string module_prefix,
                                                                                     right_arm_homing( right_arm_chain_interface.getNumberOfJoints() ),
                                                                                     left_leg_homing( left_leg_chain_interface.getNumberOfJoints() ),
                                                                                     right_leg_homing( left_leg_chain_interface.getNumberOfJoints() ),
-                                                                                    max_vel( DEFAULT_MAX_VEL ),
                                                                                     command_interface( module_prefix ),
                                                                                     generic_thread(module_prefix, rf, ph)
 {
 }
 
+bool simple_homing::set_ref_speed_to_all( double ref_speed )
+{
+            // torso chain
+    return  set_ref_speed_to_chain( torso_chain_interface, ref_speed ) &&
+            // left_arm chain
+            set_ref_speed_to_chain( left_arm_chain_interface, ref_speed ) &&
+            // right_arm chain
+            set_ref_speed_to_chain( right_arm_chain_interface, ref_speed ) &&
+            // left_leg chain
+            set_ref_speed_to_chain( left_leg_chain_interface, ref_speed ) &&
+            // right_leg chain
+            set_ref_speed_to_chain( right_leg_chain_interface, ref_speed );
+}
 
+bool simple_homing::set_ref_speed_to_chain( walkman::drc::yarp_single_chain_interface& chain_interface, double ref_speed )
+{
+    // get joints number
+    int num_joints = chain_interface.getNumberOfJoints();
+    // set the speed references
+    yarp::sig::Vector ref_speed_vec = yarp::sig::Vector( num_joints );
+    bool set_success = true;
+    for( int i = 0; i < num_joints && set_success; i++ ) {
+        ref_speed_vec[i] = ref_speed;
+        set_success = chain_interface.positionControl->setRefSpeed( i, ref_speed_vec[i] );
+    }
+    // success if the ref speed is setted in every joints of the chain 
+    return set_success;
+} 
 
 bool simple_homing::custom_init()
 {
@@ -34,44 +57,24 @@ bool simple_homing::custom_init()
     thread_param.sched_priority = 99;
     pthread_setschedparam(pthread_self(), SCHED_FIFO, &thread_param);
     
-    // initialize homing vectors
-    if( !parser.getConfiguration( "torso", torso_homing ) )
-        std::cout << "Error loading torso homing. All zeros will be used." << std::endl;
-    if( !parser.getConfiguration( "left_arm", left_arm_homing ) )
-        std::cout << "Error loading left_arm homing. All zeros will be used." << std::endl;
-    if( !parser.getConfiguration( "right_arm", right_arm_homing ) )
-        std::cout << "Error loading right_arm homing. All zeros will be used." << std::endl;
-    if( !parser.getConfiguration( "left_leg", left_leg_homing ) )
-        std::cout << "Error loading left_leg homing. All zeros will be used." << std::endl;
-    if( !parser.getConfiguration( "right_leg", right_leg_homing ) )
-        std::cout << "Error loading right_leg homing. All zeros will be used."<< std::endl;
-    if( !parser.getMaxVelocity( max_vel ) )
-        std::cout << "Error loading max vel. "<< max_vel <<" [deg/sec] will be used." << std::endl;
-    
-    // param helper link param for all the chains
+    // param helper link param for all the chains and the max_vel param
     std::shared_ptr<paramHelp::ParamHelperServer> ph = get_param_helper();
     ph->linkParam( PARAM_ID_TORSO, torso_homing.data() );
     ph->linkParam( PARAM_ID_LEFT_ARM, left_arm_homing.data() );
     ph->linkParam( PARAM_ID_RIGHT_ARM, right_arm_homing.data() );
     ph->linkParam( PARAM_ID_LEFT_LEG, left_leg_homing.data() );
     ph->linkParam( PARAM_ID_RIGHT_LEG, right_leg_homing.data() );
+    ph->linkParam( PARAM_ID_MAX_VEL, &max_vel );
     
     return true;
 }
 
 void simple_homing::control_and_move( walkman::drc::yarp_single_chain_interface& chain_interface, yarp::sig::Vector homing )
 {
-    // get joints number
-    int num_joints = chain_interface.getNumberOfJoints();
-    // set the speed references
-    yarp::sig::Vector ref_speed_vec = yarp::sig::Vector( num_joints );
-    for( int i = 0; i < num_joints; i++ ) {
-        ref_speed_vec[i] = max_vel;
-        chain_interface.positionControl->setRefSpeed( i, ref_speed_vec[i] );
-    }
+    // set the speed ref for the chain -> TODO: take care of the success/failure of this function
+    bool set_success = set_ref_speed_to_chain( chain_interface, max_vel );
     // position move to homing
-    chain_interface.positionControl->positionMove( homing.data() );
-       
+    chain_interface.positionControl->positionMove( homing.data() ); 
 }
 
 void simple_homing::run()
@@ -92,4 +95,17 @@ void simple_homing::run()
         std::cout << "Reached Home Position" << std::endl;
     }
 }
+
+bool simple_homing::custom_pause()
+{
+    // set the ref speed to 0 for all the chains
+     set_ref_speed_to_all( 0 );
+}
+
+bool simple_homing::custom_resume()
+{
+    // set the ref speed to max_vel for all the chains
+    set_ref_speed_to_all( max_vel );
+}
+
 

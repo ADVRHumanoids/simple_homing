@@ -23,6 +23,8 @@ int main(int argc, char* argv[])
     // create rf
     yarp::os::ResourceFinder rf;
     rf.setVerbose(true);
+    // set initial_config.ini as default
+    // to specify another config file, run the simple_homing with this arg: --from your_config_file.ini 
     rf.setDefaultConfigFile( "initial_config.ini" ); 
     rf.setDefaultContext( "simple_homing" );  
     rf.configure(argc, argv);

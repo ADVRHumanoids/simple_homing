@@ -31,22 +31,18 @@ if(COMMAND cmake_policy)
     cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
-ADD_LIBRARY(${PROJECT_NAME}_file_parser STATIC src/file_parser.cpp include/file_parser.h)
 ADD_LIBRARY(${PROJECT_NAME}_lib STATIC src/simple_homing.cpp)
 ADD_EXECUTABLE(simple_homing src/main.cpp)
 
 include_directories()
-TARGET_LINK_LIBRARIES(${PROJECT_NAME}_file_parser ${YARP_LIBRARIES} )
 
 SET(definitionsYarpInterface USE_POSITION_CONTROL_LEFT_ARM=true USE_POSITION_CONTROL_RIGHT_ARM=true)
 
-TARGET_LINK_LIBRARIES(${PROJECT_NAME}_lib 	${PROJECT_NAME}_file_parser 
-						${YARP_LIBRARIES}
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}_lib 	${YARP_LIBRARIES}
 						${drc_shared_LIBRARIES}
 						${paramHelp_LIBRARIES})
 
 TARGET_LINK_LIBRARIES(simple_homing ${PROJECT_NAME}_lib 
-                                    ${PROJECT_NAME}_file_parser 
                                     ${YARP_LIBRARIES}
                                     ${drc_shared_LIBRARIES}
                                     ${paramHelp_LIBRARIES}
