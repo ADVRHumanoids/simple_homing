@@ -6,6 +6,7 @@
 
 #include <drc_shared/yarp_single_chain_interface.h>
 #include <drc_shared/yarp_command_interface.hpp>
+#include <drc_shared/yarp_status_interface.h>
 #include <drc_shared/generic_thread.hpp>
 
 /**
@@ -88,7 +89,12 @@ private:
      * 
      */
     walkman::drc::yarp_command_interface command_interface;
-
+    
+    /**
+     * @brief simple_homing status interface
+     * 
+     */
+    walkman::drc::yarp_status_interface status_interface;
     
     /**
      * @brief set the speed ref for all the chains of the robot 

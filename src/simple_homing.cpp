@@ -4,6 +4,10 @@
 #include "simple_homing.h"
 #include "simple_homing_constants.h"
 
+#define READY_STATUS "ready"
+#define MOVING_STATUS "moving"
+#define HOME_STATUS "home"
+
 simple_homing::simple_homing(std::string module_prefix, 
                              yarp::os::ResourceFinder rf, 
                              std::shared_ptr< paramHelp::ParamHelperServer > ph) :  torso_chain_interface( "torso", module_prefix ),
@@ -17,8 +21,13 @@ simple_homing::simple_homing(std::string module_prefix,
                                                                                     left_leg_homing( left_leg_chain_interface.getNumberOfJoints() ),
                                                                                     right_leg_homing( left_leg_chain_interface.getNumberOfJoints() ),
                                                                                     command_interface( module_prefix ),
+                                                                                    status_interface( module_prefix ),
                                                                                     generic_thread(module_prefix, rf, ph)
 {
+    // start the status chain_interface
+    status_interface.start();
+    // notify the ready status
+    status_interface.setStatus( READY_STATUS );
 }
 
 bool simple_homing::set_ref_speed_to_all( double ref_speed )
@@ -65,7 +74,7 @@ bool simple_homing::custom_init()
     ph->linkParam( PARAM_ID_LEFT_LEG, left_leg_homing.data() );
     ph->linkParam( PARAM_ID_RIGHT_LEG, right_leg_homing.data() );
     ph->linkParam( PARAM_ID_MAX_VEL, &max_vel );
-    
+
     return true;
 }
 
@@ -81,6 +90,8 @@ void simple_homing::run()
 {   
     // if we have to go to homing position -> control and move all the chains as specified in the homing vectors
     if( command_interface.getCommand() == "homing" ) {
+	// notify the moving status
+	status_interface.setStatus( MOVING_STATUS );
         // torso chain
         control_and_move( torso_chain_interface, torso_homing );
         // left_arm chain
@@ -91,6 +102,9 @@ void simple_homing::run()
         control_and_move( left_leg_chain_interface, left_leg_homing );
         // right_leg chain
         control_and_move( right_leg_chain_interface, right_leg_homing );
+	
+	// notify the home status
+	status_interface.setStatus( HOME_STATUS );
         // we are in homing position
         std::cout << "Reached Home Position" << std::endl;
     }
