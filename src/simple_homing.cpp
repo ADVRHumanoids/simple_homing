@@ -10,19 +10,20 @@
 
 simple_homing::simple_homing(std::string module_prefix, 
                              yarp::os::ResourceFinder rf, 
-                             std::shared_ptr< paramHelp::ParamHelperServer > ph) :  torso_chain_interface( "torso", module_prefix ),
-                                                                                    left_arm_chain_interface( "left_arm", module_prefix ),
-                                                                                    right_arm_chain_interface( "right_arm", module_prefix ),
-                                                                                    left_leg_chain_interface( "left_leg", module_prefix ),
-                                                                                    right_leg_chain_interface( "right_leg", module_prefix ),
-                                                                                    torso_homing( torso_chain_interface.getNumberOfJoints() ),
-                                                                                    left_arm_homing( left_arm_chain_interface.getNumberOfJoints() ),
-                                                                                    right_arm_homing( right_arm_chain_interface.getNumberOfJoints() ),
-                                                                                    left_leg_homing( left_leg_chain_interface.getNumberOfJoints() ),
-                                                                                    right_leg_homing( left_leg_chain_interface.getNumberOfJoints() ),
-                                                                                    command_interface( module_prefix ),
-                                                                                    status_interface( module_prefix ),
-                                                                                    generic_thread(module_prefix, rf, ph)
+                             std::shared_ptr< paramHelp::ParamHelperServer > ph) :
+    torso_chain_interface( "torso", module_prefix, rf.find("robot_name").asString().c_str(), false, VOCAB_CM_POSITION),
+    left_arm_chain_interface( "left_arm", module_prefix, rf.find("robot_name").asString().c_str(), false, VOCAB_CM_POSITION),
+    right_arm_chain_interface( "right_arm", module_prefix, rf.find("robot_name").asString().c_str(), false, VOCAB_CM_POSITION),
+    left_leg_chain_interface( "left_leg", module_prefix, rf.find("robot_name").asString().c_str(), false, VOCAB_CM_POSITION),
+    right_leg_chain_interface( "right_leg", module_prefix, rf.find("robot_name").asString().c_str(), false, VOCAB_CM_POSITION),
+    torso_homing( torso_chain_interface.getNumberOfJoints() ),
+    left_arm_homing( left_arm_chain_interface.getNumberOfJoints() ),
+    right_arm_homing( right_arm_chain_interface.getNumberOfJoints() ),
+    left_leg_homing( left_leg_chain_interface.getNumberOfJoints() ),
+    right_leg_homing( left_leg_chain_interface.getNumberOfJoints() ),
+    command_interface( module_prefix ),
+    status_interface( module_prefix ),
+    generic_thread(module_prefix, rf, ph)
 {
     // start the status chain_interface
     status_interface.start();
@@ -83,7 +84,7 @@ void simple_homing::control_and_move( walkman::drc::yarp_single_chain_interface&
     // set the speed ref for the chain -> TODO: take care of the success/failure of this function
     bool set_success = set_ref_speed_to_chain( chain_interface, max_vel );
     // position move to homing
-    chain_interface.positionControl->positionMove( homing.data() ); 
+    chain_interface.move(homing);
 }
 
 void simple_homing::run()
