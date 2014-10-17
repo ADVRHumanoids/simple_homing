@@ -11,11 +11,11 @@
 simple_homing::simple_homing(std::string module_prefix, 
                              yarp::os::ResourceFinder rf, 
                              std::shared_ptr< paramHelp::ParamHelperServer > ph) :
-    torso_chain_interface( "torso", module_prefix, rf.find("robot_name").asString().c_str(), false, VOCAB_CM_POSITION),
-    left_arm_chain_interface( "left_arm", module_prefix, rf.find("robot_name").asString().c_str(), false, VOCAB_CM_POSITION),
-    right_arm_chain_interface( "right_arm", module_prefix, rf.find("robot_name").asString().c_str(), false, VOCAB_CM_POSITION),
-    left_leg_chain_interface( "left_leg", module_prefix, rf.find("robot_name").asString().c_str(), false, VOCAB_CM_POSITION),
-    right_leg_chain_interface( "right_leg", module_prefix, rf.find("robot_name").asString().c_str(), false, VOCAB_CM_POSITION),
+    torso_chain_interface( "torso", module_prefix, rf.find("robot_name").asString().c_str(), false),
+    left_arm_chain_interface( "left_arm", module_prefix, rf.find("robot_name").asString().c_str(), false),
+    right_arm_chain_interface( "right_arm", module_prefix, rf.find("robot_name").asString().c_str(), false),
+    left_leg_chain_interface( "left_leg", module_prefix, rf.find("robot_name").asString().c_str(), false),
+    right_leg_chain_interface( "right_leg", module_prefix, rf.find("robot_name").asString().c_str(), false),
     torso_homing( torso_chain_interface.getNumberOfJoints() ),
     left_arm_homing( left_arm_chain_interface.getNumberOfJoints() ),
     right_arm_homing( right_arm_chain_interface.getNumberOfJoints() ),
@@ -75,6 +75,12 @@ bool simple_homing::custom_init()
     ph->linkParam( PARAM_ID_LEFT_LEG, left_leg_homing.data() );
     ph->linkParam( PARAM_ID_RIGHT_LEG, right_leg_homing.data() );
     ph->linkParam( PARAM_ID_MAX_VEL, &max_vel );
+
+    left_arm_chain_interface.setPositionMode();
+    right_arm_chain_interface.setPositionMode();
+    left_leg_chain_interface.setPositionMode();
+    right_leg_chain_interface.setPositionMode();
+    torso_chain_interface.setPositionMode();
 
     return true;
 }

@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
     rf.setDefaultContext( "simple_homing" );  
     rf.configure(argc, argv);
     // create my module
-    simple_homing_module sp_mod = simple_homing_module( argc, argv, "simple_homing2", MODULE_PERIOD, rf );
+    simple_homing_module sp_mod = simple_homing_module( argc, argv, "simple_homing", MODULE_PERIOD, rf );
         
     // yarp network deinitialization
     yarp.fini();
