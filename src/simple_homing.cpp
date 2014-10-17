@@ -21,9 +21,9 @@ simple_homing::simple_homing(std::string module_prefix,
     right_arm_homing( right_arm_chain_interface.getNumberOfJoints() ),
     left_leg_homing( left_leg_chain_interface.getNumberOfJoints() ),
     right_leg_homing( left_leg_chain_interface.getNumberOfJoints() ),
-    command_interface( module_prefix ),
-    status_interface( module_prefix ),
-    generic_thread(module_prefix, rf, ph)
+    command_interface( get_robot_name() + "/" + module_prefix ),
+    status_interface( get_robot_name() + "/" + module_prefix ),
+    generic_thread( module_prefix, rf, ph )
 {
     // start the status chain_interface
     status_interface.start();
