@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
     yarp.fini();
     
     // run the module
-    sp_mod.runModule();
+    sp_mod.runModule( rf );
     
     exit(EXIT_SUCCESS);
 }
