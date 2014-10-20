@@ -1,7 +1,6 @@
 #ifndef SIMPLE_HOMING_H_
 #define SIMPLE_HOMING_H_
 
-#include <yarp/os/RateThread.h>
 #include <yarp/sig/Vector.h>
 
 #include <drc_shared/yarp_single_chain_interface.h>

@@ -2,12 +2,10 @@
 #include <drc_shared/generic_module.hpp>
 #include <cstdlib>
 
-#include "simple_homing.h"
 #include "simple_homing_module.hpp"
 
 // define
-#define MODULE_PERIOD 1000//[millisec]
-
+#define MODULE_PERIOD 1000 //[millisec]
 
 int main(int argc, char* argv[])
 {

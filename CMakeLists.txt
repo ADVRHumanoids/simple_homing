@@ -19,12 +19,11 @@ set(ROS_LIB_FOLDER $ENV{ROS_LIB_FOLDER} CACHE STRING "ros lib folder")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}")
 
 FIND_PACKAGE(YARP REQUIRED)
-FIND_PACKAGE(Eigen REQUIRED)
 FIND_PACKAGE(drc_shared REQUIRED)
 FIND_PACKAGE(paramHelp REQUIRED)
 
 # add include directories
-INCLUDE_DIRECTORIES(include ${YARP_INCLUDE_DIRS} ${Eigen_INCLUDE_DIRS} ${drc_shared_INCLUDE_DIRS} ${paramHelp_INCLUDE_DIRS} )
+INCLUDE_DIRECTORIES(include ${YARP_INCLUDE_DIRS} ${drc_shared_INCLUDE_DIRS} ${paramHelp_INCLUDE_DIRS} )
 LINK_DIRECTORIES(${ROS_LIB_FOLDER} ${WALKMAN_LIB_FOLDER})
 
 if(COMMAND cmake_policy)
@@ -33,10 +32,6 @@ endif(COMMAND cmake_policy)
 
 ADD_LIBRARY(${PROJECT_NAME}_lib STATIC src/simple_homing.cpp)
 ADD_EXECUTABLE(simple_homing src/main.cpp)
-
-include_directories()
-
-SET(definitionsYarpInterface USE_POSITION_CONTROL_LEFT_ARM=true USE_POSITION_CONTROL_RIGHT_ARM=true)
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}_lib 	${YARP_LIBRARIES}
 						${drc_shared_LIBRARIES}
