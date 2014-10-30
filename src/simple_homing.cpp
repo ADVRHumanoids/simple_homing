@@ -13,6 +13,7 @@
 simple_homing::simple_homing(std::string module_prefix, 
                              yarp::os::ResourceFinder rf, 
                              std::shared_ptr< paramHelp::ParamHelperServer > ph) :
+    generic_thread( module_prefix, rf, ph ),
     coman( module_prefix, VOCAB_CM_POSITION_DIRECT ),
     torso_homing( coman.torso.getNumberOfJoints() ),
     left_arm_homing( coman.left_arm.getNumberOfJoints() ),
@@ -21,9 +22,8 @@ simple_homing::simple_homing(std::string module_prefix,
     right_leg_homing( coman.right_leg.getNumberOfJoints() ),
     q_homing( coman.getNumberOfJoints() ),
     q( coman.getNumberOfJoints() ),
-    command_interface( get_robot_name() + "/" + module_prefix ),
-    status_interface( get_robot_name() + "/" + module_prefix ),
-    generic_thread( module_prefix, rf, ph )
+    command_interface( module_prefix ),
+    status_interface( module_prefix )
 {
     // start the status chain_interface
     status_interface.start();
@@ -123,7 +123,6 @@ bool simple_homing::checkGoal()
 
 void simple_homing::run()
 {   
-    std::cout << "rate : " << this->getRate() << std::endl;
     // if we have to go to homing position or we are moving -> control and move all the chains as specified in the homing vectors
     if( command_interface.getCommand() == "homing" || status_interface.state == MOVING_STATUS ) {
 	// notify the moving status
@@ -149,6 +148,7 @@ void simple_homing::run()
 
 void simple_homing::update_q_homing()
 {
+    std:: cout << "Updating q_homing ..." << std::endl;
     coman.fromRobotToIdyn( right_arm_homing, 
 			   left_arm_homing, 
 			   torso_homing, 

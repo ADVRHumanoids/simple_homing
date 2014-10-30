@@ -84,6 +84,19 @@ public:
     }
     
     
+    virtual void custom_ph_param_value_changed_callback() 
+    {	
+	// get param helper
+	std::shared_ptr< paramHelp::ParamHelperServer > ph = get_param_helper();
+	// register all the callbacks
+	ph->registerParamValueChangedCallback( PARAM_ID_TORSO, this );
+	ph->registerParamValueChangedCallback( PARAM_ID_LEFT_ARM, this );
+	ph->registerParamValueChangedCallback( PARAM_ID_RIGHT_ARM, this );
+	ph->registerParamValueChangedCallback( PARAM_ID_LEFT_LEG, this );
+	ph->registerParamValueChangedCallback( PARAM_ID_RIGHT_LEG, this );
+	ph->registerParamValueChangedCallback( PARAM_ID_MAX_VEL, this );
+    }
+    
     virtual void custom_parameterUpdated(const paramHelp::ParamProxyInterface *pd)
     {
 	simple_homing* thread = get_thread();
