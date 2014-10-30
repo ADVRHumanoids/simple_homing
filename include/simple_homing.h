@@ -11,7 +11,6 @@
 /**
  * @brief simple homing control thread: move all the joints of the robot to the desired homing position
  * 
- * @author Luca Muratore (luca.muratore@iit.it), starting from Enrico Mingo (enrico.mingo@iit.it) implementation.
  **/
 class simple_homing: public generic_thread
 {
@@ -76,12 +75,45 @@ private:
      */
     yarp::sig::Vector right_leg_homing;
     
-     
+    
+    /**
+     * @brief torso vector
+     * 
+     */
+    yarp::sig::Vector torso;
+    
+    /**
+     * @brief left arm vector
+     * 
+     */
+    yarp::sig::Vector left_arm;
+    
+    /**
+     * @brief right arm vector
+     * 
+     */
+    yarp::sig::Vector right_arm;
+    
+    /**
+     * @brief left leg vector
+     * 
+     */
+    yarp::sig::Vector left_leg;
+    
+    /**
+     * @brief right leg vector
+     * 
+     */
+    yarp::sig::Vector right_leg;
+    
+    
     /**
      * @brief max speed ref in [degree/second]
      * 
      */
     double max_vel;
+    
+    double max_q_increment;
     
     /**
      * @brief simple_homing command interface
@@ -118,7 +150,13 @@ private:
      * @param chain_interface chain interface to control and move
      * @param homing homing configuration for the current chain
      */
-    void control_and_move( walkman::drc::yarp_single_chain_interface& chain_interface, yarp::sig::Vector homing );
+    void control_and_move( walkman::drc::yarp_single_chain_interface& chain_interface, 
+			   yarp::sig::Vector homing, 
+			    yarp::sig::Vector& q );
+    
+    bool checkGoal(const  yarp::sig::Vector& q, const  yarp::sig::Vector& q_goal);
+
+    void controlLaw(const  yarp::sig::Vector& homing_vector, yarp::sig::Vector& q);
     
 public:
     
