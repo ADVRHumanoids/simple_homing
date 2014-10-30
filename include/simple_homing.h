@@ -7,6 +7,7 @@
 #include <drc_shared/yarp_command_interface.hpp>
 #include <drc_shared/yarp_status_interface.h>
 #include <drc_shared/generic_thread.hpp>
+#include <drc_shared/comanutils.h>
 
 /**
  * @brief simple homing control thread: move all the joints of the robot to the desired homing position
@@ -16,34 +17,10 @@ class simple_homing: public generic_thread
 {
 private:   
     /**
-     * @brief torso chain interface
+     * @brief whole-body control facilities
      * 
      */
-    walkman::drc::yarp_single_chain_interface torso_chain_interface;
-    
-    /**
-     * @brief left arm chain interface
-     * 
-     */
-    walkman::drc::yarp_single_chain_interface left_arm_chain_interface;
-    
-    /**
-     * @brief right arm chain interface
-     * 
-     */
-    walkman::drc::yarp_single_chain_interface right_arm_chain_interface;
-    
-    /**
-     * @brief left leg chain interface
-     * 
-     */
-    walkman::drc::yarp_single_chain_interface left_leg_chain_interface;
-    
-    /**
-     * @brief right leg chain interface
-     * 
-     */
-    walkman::drc::yarp_single_chain_interface right_leg_chain_interface;
+    ComanUtils coman;
     
     /**
      * @brief torso homing vector
@@ -75,44 +52,28 @@ private:
      */
     yarp::sig::Vector right_leg_homing;
     
-    
     /**
-     * @brief torso vector
+     * @brief whole-body reference position
      * 
      */
-    yarp::sig::Vector torso;
+    yarp::sig::Vector q_homing;
     
     /**
-     * @brief left arm vector
+     * @brief whole-body position
      * 
      */
-    yarp::sig::Vector left_arm;
+    yarp::sig::Vector q;
     
     /**
-     * @brief right arm vector
-     * 
-     */
-    yarp::sig::Vector right_arm;
-    
-    /**
-     * @brief left leg vector
-     * 
-     */
-    yarp::sig::Vector left_leg;
-    
-    /**
-     * @brief right leg vector
-     * 
-     */
-    yarp::sig::Vector right_leg;
-    
-    
-    /**
-     * @brief max speed ref in [degree/second]
+     * @brief max speed ref in [radians/second]
      * 
      */
     double max_vel;
     
+    /**
+     * @brief maximum q increment in [radians]
+     * 
+     */
     double max_q_increment;
     
     /**
@@ -143,20 +104,14 @@ private:
      * @return true on success, false otherwise
      */
     bool set_ref_speed_to_chain( walkman::drc::yarp_single_chain_interface& chain_interface, double ref_speed );
-    
-    /**
-     * @brief control and move all the joints of the chain_interface param to the homing configuration specified in homing vector
-     * 
-     * @param chain_interface chain interface to control and move
-     * @param homing homing configuration for the current chain
-     */
-    void control_and_move( walkman::drc::yarp_single_chain_interface& chain_interface, 
-			   yarp::sig::Vector homing, 
-			    yarp::sig::Vector& q );
-    
-    bool checkGoal(const  yarp::sig::Vector& q, const  yarp::sig::Vector& q_goal);
 
-    void controlLaw(const  yarp::sig::Vector& homing_vector, yarp::sig::Vector& q);
+    
+    
+    void control_and_move();
+    
+    bool checkGoal();
+
+    void controlLaw();
     
 public:
     
@@ -170,6 +125,13 @@ public:
     simple_homing( std::string module_prefix, 
                    yarp::os::ResourceFinder rf, 
                    std::shared_ptr<paramHelp::ParamHelperServer> ph );
+    
+    /**
+     * @brief TODO
+     * 
+     * @return void
+     */
+    void update_q_homing();
     
     /**
      * @brief simple_homing control thread initialization

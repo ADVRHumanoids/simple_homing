@@ -2,6 +2,7 @@
 #define SIMPLE_HOMING_MODULE_HPP_
 
 #include <drc_shared/generic_module.hpp>
+#include <drc_shared/comanutils.h>
 #include "simple_homing.h"
 #include "simple_homing_constants.h"
 
@@ -80,6 +81,20 @@ public:
                                                                             NULL, 
                                                                             "maximum velocity in [degree/second]" ) );
         return custom_params;
+    }
+    
+    
+    virtual void custom_parameterUpdated(const paramHelp::ParamProxyInterface *pd)
+    {
+	simple_homing* thread = get_thread();
+	if( pd->id == PARAM_ID_TORSO || 
+	    pd->id == PARAM_ID_LEFT_ARM ||
+	    pd->id == PARAM_ID_RIGHT_ARM ||
+	    pd->id == PARAM_ID_LEFT_LEG ||
+	    pd->id == PARAM_ID_RIGHT_LEG
+	) {
+	    thread->update_q_homing();
+	}
     }
 };
 
