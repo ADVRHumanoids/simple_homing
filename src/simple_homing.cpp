@@ -124,10 +124,14 @@ bool simple_homing::checkGoal()
 void simple_homing::run()
 {   
     // if we have to go to homing position or we are moving -> control and move all the chains as specified in the homing vectors
-    if( command_interface.getCommand() == "homing" || status_interface.state == MOVING_STATUS ) {
+    if( command_interface.getCommand() == "homing") {
+	q = coman.sensePosition();
+
 	// notify the moving status
 	status_interface.setStatus( MOVING_STATUS );
-	
+    }
+    
+    if( status_interface.state == MOVING_STATUS ) {
 	// check the goal
 	if( checkGoal() )
 	{
