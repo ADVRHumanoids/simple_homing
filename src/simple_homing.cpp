@@ -10,11 +10,14 @@
 #define MOVING_STATUS "moving"
 #define HOME_STATUS "home"
 
+#define RAD2DEG    (180.0/M_PI)
+#define DEG2RAD    (M_PI/180.0)
+
 simple_homing::simple_homing(std::string module_prefix, 
                              yarp::os::ResourceFinder rf, 
                              std::shared_ptr< paramHelp::ParamHelperServer > ph) :
     generic_thread( module_prefix, rf, ph ),
-    coman( module_prefix, VOCAB_CM_POSITION_DIRECT ),
+    coman( module_prefix ),
     torso_homing( coman.torso.getNumberOfJoints() ),
     left_arm_homing( coman.left_arm.getNumberOfJoints() ),
     right_arm_homing( coman.right_arm.getNumberOfJoints() ),
@@ -31,20 +34,23 @@ simple_homing::simple_homing(std::string module_prefix,
     status_interface.setStatus( READY_STATUS );
 }
 
+// TODO: move in ComanUtils with the use of radians
 bool simple_homing::set_ref_speed_to_all( double ref_speed )
 {
-            // torso chain
-    return  set_ref_speed_to_chain( coman.torso, ref_speed ) &&
-            // left_arm chain
-            set_ref_speed_to_chain( coman.left_arm, ref_speed ) &&
-            // right_arm chain
-            set_ref_speed_to_chain( coman.right_arm, ref_speed ) &&
-            // left_leg chain
-            set_ref_speed_to_chain( coman.left_leg, ref_speed ) &&
-            // right_leg chain
-            set_ref_speed_to_chain( coman.right_leg, ref_speed );
+    ref_speed = ( RAD2DEG * ref_speed );
+		// torso chain
+    return  ( 	set_ref_speed_to_chain( coman.torso, ref_speed ) &&
+		// left_arm chain
+		set_ref_speed_to_chain( coman.left_arm, ref_speed ) &&
+		// right_arm chain
+		set_ref_speed_to_chain( coman.right_arm, ref_speed ) &&
+		// left_leg chain
+		set_ref_speed_to_chain( coman.left_leg, ref_speed ) &&
+		// right_leg chain
+		set_ref_speed_to_chain( coman.right_leg, ref_speed ) );
 }
 
+// TODO: move in ComanUtils with the use of radians
 bool simple_homing::set_ref_speed_to_chain( walkman::drc::yarp_single_chain_interface& chain_interface, double ref_speed )
 {
     // get joints number
@@ -92,9 +98,9 @@ void simple_homing::control_and_move()
     // set the speed ref for the chain -> TODO: take care of the success/failure of this function
     bool set_success = set_ref_speed_to_all( max_vel );
     // control law
-    controlLaw( );
+    controlLaw();
     // position move to homing
-    coman.move( q );
+    coman.move( q_homing );
 }
 
 void simple_homing::controlLaw()
