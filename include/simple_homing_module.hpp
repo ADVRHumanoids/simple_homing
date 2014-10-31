@@ -106,7 +106,9 @@ public:
 	    pd->id == PARAM_ID_LEFT_LEG ||
 	    pd->id == PARAM_ID_RIGHT_LEG
 	) {
-	    thread->update_q_homing();
+	    if( thread ) {
+		thread->update_q_homing();
+	    }
 	}
     }
 };
