@@ -58,8 +58,8 @@ bool simple_homing::custom_init()
     // sense
     q = coman.sensePosition();
 
-    // set all boards to position direct control mode
-    coman.setPositionDirectMode();
+    // set all boards to position control mode
+    coman.setPositionMode();
 
     return true;
 }
