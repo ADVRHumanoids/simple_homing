@@ -34,38 +34,6 @@ simple_homing::simple_homing(std::string module_prefix,
     status_interface.setStatus( READY_STATUS );
 }
 
-// TODO: move in ComanUtils with the use of radians
-bool simple_homing::set_ref_speed_to_all( double ref_speed )
-{
-    ref_speed = ( RAD2DEG * ref_speed );
-		// torso chain
-    return  ( 	set_ref_speed_to_chain( coman.torso, ref_speed ) &&
-		// left_arm chain
-		set_ref_speed_to_chain( coman.left_arm, ref_speed ) &&
-		// right_arm chain
-		set_ref_speed_to_chain( coman.right_arm, ref_speed ) &&
-		// left_leg chain
-		set_ref_speed_to_chain( coman.left_leg, ref_speed ) &&
-		// right_leg chain
-		set_ref_speed_to_chain( coman.right_leg, ref_speed ) );
-}
-
-// TODO: move in ComanUtils with the use of radians
-bool simple_homing::set_ref_speed_to_chain( walkman::drc::yarp_single_chain_interface& chain_interface, double ref_speed )
-{
-    // get joints number
-    int num_joints = chain_interface.getNumberOfJoints();
-    // set the speed references
-    yarp::sig::Vector ref_speed_vec = yarp::sig::Vector( num_joints );
-    bool set_success = true;
-    for( int i = 0; i < num_joints && set_success; i++ ) {
-        ref_speed_vec[i] = ref_speed;
-        set_success = chain_interface.positionControl->setRefSpeed( i, ref_speed_vec[i] );
-    }
-    // success if the ref speed is setted in every joints of the chain 
-    return set_success;
-} 
-
 bool simple_homing::custom_init()
 {
     // real-time thread
@@ -90,13 +58,16 @@ bool simple_homing::custom_init()
     // sense
     q = coman.sensePosition();
 
+    // set all boards to position direct control mode
+    coman.setPositionDirectMode();
+
     return true;
 }
 
 void simple_homing::control_and_move()
 {
     // set the speed ref for the chain -> TODO: take care of the success/failure of this function
-    bool set_success = set_ref_speed_to_all( max_vel );
+    bool set_success = coman.setReferenceSpeed( max_vel );
     // control law
     controlLaw();
     // position move to homing
@@ -171,13 +142,13 @@ void simple_homing::update_q_homing()
 bool simple_homing::custom_pause()
 {
     // set the ref speed to 0 for all the chains
-     set_ref_speed_to_all( 0 );
+    coman.setReferenceSpeed( 0 );
 }
 
 bool simple_homing::custom_resume()
 {
     // set the ref speed to max_vel for all the chains
-    set_ref_speed_to_all( max_vel );
+    coman.setReferenceSpeed( max_vel );
 }
 
 

@@ -87,26 +87,7 @@ private:
      * 
      */
     walkman::drc::yarp_status_interface status_interface;
-    
-    /**
-     * @brief set the speed ref for all the chains of the robot 
-     * 
-     * @param ref_speed speed ref 
-     * @return true on success, false otherwise
-     */
-    bool set_ref_speed_to_all( double ref_speed );
-    
-    /**
-     * @brief set the speed ref for all the chain specified in chain_interface param
-     * 
-     * @param chain_interface chain interface to set the speed ref
-     * @param ref_speed speed ref 
-     * @return true on success, false otherwise
-     */
-    bool set_ref_speed_to_chain( walkman::drc::yarp_single_chain_interface& chain_interface, double ref_speed );
 
-    
-    
     void control_and_move();
     
     bool checkGoal();
