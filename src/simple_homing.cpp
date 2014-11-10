@@ -74,7 +74,7 @@ void simple_homing::control_and_move()
     // control law
     controlLaw();
     // position move to homing
-    coman.move( q_homing );
+    coman.move( q );
 }
 
 void simple_homing::controlLaw()
