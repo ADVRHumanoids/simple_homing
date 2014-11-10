@@ -20,5 +20,8 @@
 // max_vel
 #define PARAM_ID_MAX_VEL 5
 #define PARAM_SIZE_MAX_VEL 1
+// control_mode
+#define PARAM_ID_CONTROL_MODE 6
+#define PARAM_SIZE_CONTROL_MODE 1
 
 #endif

@@ -81,6 +81,13 @@ public:
                                                                             paramHelp::PARAM_IN_OUT, 
                                                                             NULL, 
                                                                             "maximum velocity in [degree/second]" ) );
+	// insert control_mode param
+        custom_params.push_back( new paramHelp::ParamProxyBasic<std::string>(   "control_mode", 
+										PARAM_ID_CONTROL_MODE, 
+										PARAM_SIZE_CONTROL_MODE, 
+										paramHelp::PARAM_IN_OUT, 
+										NULL, 
+										"control mode configuration" ) );
         return custom_params;
     }
     
@@ -96,19 +103,23 @@ public:
 	ph->registerParamValueChangedCallback( PARAM_ID_LEFT_LEG, this );
 	ph->registerParamValueChangedCallback( PARAM_ID_RIGHT_LEG, this );
 	ph->registerParamValueChangedCallback( PARAM_ID_MAX_VEL, this );
+	ph->registerParamValueChangedCallback( PARAM_ID_CONTROL_MODE, this );
     }
     
     virtual void custom_parameterUpdated(const paramHelp::ParamProxyInterface *pd)
     {
 	simple_homing* thread = get_thread();
-	if( pd->id == PARAM_ID_TORSO || 
-	    pd->id == PARAM_ID_LEFT_ARM ||
-	    pd->id == PARAM_ID_RIGHT_ARM ||
-	    pd->id == PARAM_ID_LEFT_LEG ||
-	    pd->id == PARAM_ID_RIGHT_LEG
-	) {
-	    if( thread ) {
-		thread->update_q_homing();
+	if( thread ) {
+	    if( pd->id == PARAM_ID_TORSO || 
+		pd->id == PARAM_ID_LEFT_ARM ||
+		pd->id == PARAM_ID_RIGHT_ARM ||
+		pd->id == PARAM_ID_LEFT_LEG ||
+		pd->id == PARAM_ID_RIGHT_LEG
+	    ) {
+		    thread->update_q_homing();
+	    }
+	    else if( pd->id == PARAM_ID_CONTROL_MODE ) {
+		thread->update_control_mode();
 	    }
 	}
     }

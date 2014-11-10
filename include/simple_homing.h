@@ -94,6 +94,8 @@ private:
 
     void controlLaw();
     
+    std::string actual_control_mode;
+    
 public:
     
     /**
@@ -140,6 +142,9 @@ public:
      * @return true on success, false otherwise
      */
     virtual bool custom_resume();
+    
+    
+    void update_control_mode();
     
 };
 

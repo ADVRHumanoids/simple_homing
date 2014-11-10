@@ -49,6 +49,7 @@ bool simple_homing::custom_init()
     ph->linkParam( PARAM_ID_LEFT_LEG, left_leg_homing.data() );
     ph->linkParam( PARAM_ID_RIGHT_LEG, right_leg_homing.data() );
     ph->linkParam( PARAM_ID_MAX_VEL, &max_vel );
+    ph->linkParam( PARAM_ID_CONTROL_MODE, &actual_control_mode );
     
     // initialize q homing
     update_q_homing();
@@ -58,13 +59,12 @@ bool simple_homing::custom_init()
     // sense
     q = coman.sensePosition();
 
-    // set all boards to position control mode
-    if(!coman.setPositionMode())
-        std::cout << "Error setting the robot in Position Mode" << std::endl;
+    // set all boards to actual control mode
+    update_control_mode();
 
-    // set the speed ref for the chain
-    if(!coman.setReferenceSpeed( max_vel ))
-        std::cout << "Error calling setReferenceSpeed" << std::endl;
+//     // set the speed ref for the chain
+//     if(!coman.setReferenceSpeed( max_vel ))
+//         std::cout << "Error calling setReferenceSpeed" << std::endl;
 
     return true;
 }
@@ -74,7 +74,7 @@ void simple_homing::control_and_move()
     // control law
     controlLaw();
     // position move to homing
-    coman.move( q_homing );
+    coman.move( q );
 }
 
 void simple_homing::controlLaw()
@@ -152,6 +152,23 @@ bool simple_homing::custom_resume()
 {
     // set the ref speed to max_vel for all the chains
     coman.setReferenceSpeed( max_vel );
+}
+
+void simple_homing::update_control_mode() 
+{
+    std::cout << "Control Mode -> " << actual_control_mode << std::endl;
+    if( actual_control_mode == "position_direct" ) {
+	    if(!coman.setPositionDirectMode())
+		std::cout << "Error setting the robot in " << actual_control_mode << " mode " << std::endl;
+    }
+    else if( actual_control_mode == "impedance" ) {
+	    if(!coman.setImpedanceMode())
+		std::cout << "Error setting the robot in " << actual_control_mode << " mode " << std::endl;
+    }
+    else if( actual_control_mode == "torque" ) {
+	    if(!coman.setTorqueMode())
+		std::cout << "Error setting the robot in " << actual_control_mode << " mode " << std::endl;
+    }
 }
 
 
