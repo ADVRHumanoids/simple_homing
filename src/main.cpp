@@ -1,5 +1,5 @@
 #include <yarp/os/all.h>
-#include <drc_shared/generic_module.hpp>
+#include <GYM/generic_module.hpp>
 #include <cstdlib>
 
 #include "simple_homing_module.hpp"

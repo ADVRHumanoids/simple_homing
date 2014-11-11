@@ -1,8 +1,9 @@
 #ifndef SIMPLE_HOMING_MODULE_HPP_
 #define SIMPLE_HOMING_MODULE_HPP_
 
-#include <drc_shared/generic_module.hpp>
-#include <drc_shared/comanutils.h>
+#include <GYM/generic_module.hpp>
+#include <idynutils/comanutils.h>
+
 #include "simple_homing.h"
 #include "simple_homing_constants.h"
 

@@ -122,7 +122,7 @@ void simple_homing::run()
 	}
 	else 
 	{
-	    std::cout << "Moving" << std::endl;
+	    std::cout << "Moving ..." << std::endl;
 	    // torso chain
 	    control_and_move();
 	}

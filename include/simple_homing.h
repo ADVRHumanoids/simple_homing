@@ -3,11 +3,11 @@
 
 #include <yarp/sig/Vector.h>
 
-#include <drc_shared/yarp_single_chain_interface.h>
-#include <drc_shared/yarp_command_interface.hpp>
-#include <drc_shared/yarp_status_interface.h>
-#include <drc_shared/generic_thread.hpp>
-#include <drc_shared/comanutils.h>
+#include <idynutils/yarp_single_chain_interface.h>
+#include <GYM/yarp_command_interface.hpp>
+#include <GYM/yarp_status_interface.h>
+#include <GYM/generic_thread.hpp>
+#include <idynutils/comanutils.h>
 
 /**
  * @brief simple homing control thread: move all the joints of the robot to the desired homing position
@@ -80,13 +80,13 @@ private:
      * @brief simple_homing command interface
      * 
      */
-    walkman::drc::yarp_command_interface command_interface;
+    walkman::yarp_command_interface command_interface;
     
     /**
      * @brief simple_homing status interface
      * 
      */
-    walkman::drc::yarp_status_interface status_interface;
+    walkman::yarp_status_interface status_interface;
 
     void control_and_move();
     
