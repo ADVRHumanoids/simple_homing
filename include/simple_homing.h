@@ -80,13 +80,13 @@ private:
      * @brief simple_homing command interface
      * 
      */
-    walkman::drc::yarp_command_interface command_interface;
+    walkman::yarp_command_interface command_interface;
     
     /**
      * @brief simple_homing status interface
      * 
      */
-    walkman::drc::yarp_status_interface status_interface;
+    walkman::yarp_status_interface status_interface;
 
     void control_and_move();
     
