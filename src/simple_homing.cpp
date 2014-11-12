@@ -18,12 +18,13 @@ simple_homing::simple_homing(std::string module_prefix,
                              std::shared_ptr< paramHelp::ParamHelperServer > ph) :
     generic_thread( module_prefix, rf, ph ),
     coman( module_prefix ),
-    torso_homing( coman.torso.getNumberOfJoints() ),
-    left_arm_homing( coman.left_arm.getNumberOfJoints() ),
-    right_arm_homing( coman.right_arm.getNumberOfJoints() ),
-    left_leg_homing( coman.left_leg.getNumberOfJoints() ),
-    right_leg_homing( coman.right_leg.getNumberOfJoints() ),
-    q_homing( coman.getNumberOfJoints() ),
+    torso_homing( coman.torso.getNumberOfJoints(), 0.0 ),
+    left_arm_homing( coman.left_arm.getNumberOfJoints(), 0.0 ),
+    right_arm_homing( coman.right_arm.getNumberOfJoints(), 0.0 ),
+    left_leg_homing( coman.left_leg.getNumberOfJoints(), 0.0 ),
+    right_leg_homing( coman.right_leg.getNumberOfJoints(), 0.0 ),
+    q_homing( coman.getNumberOfJoints(), 0.0 ),
+    max_vel( 0 ),
     q( coman.getNumberOfJoints() ),
     command_interface( module_prefix ),
     status_interface( module_prefix )
@@ -59,12 +60,12 @@ bool simple_homing::custom_init()
     q = coman.sensePosition();
 
     // set all boards to position control mode
-    if(!coman.setPositionMode())
+    if(!coman.setPositionDirectMode())
         std::cout << "Error setting the robot in Position Mode" << std::endl;
 
-    // set the speed ref for the chain
-    if(!coman.setReferenceSpeed( max_vel ))
-        std::cout << "Error calling setReferenceSpeed" << std::endl;
+//     // set the speed ref for the chain
+//     if(!coman.setReferenceSpeed( max_vel ))
+//         std::cout << "Error calling setReferenceSpeed" << std::endl;
 
     return true;
 }
@@ -83,10 +84,12 @@ void simple_homing::controlLaw()
     yarp::sig::Vector delta_q(number_of_dofs);
     for(unsigned int i = 0; i < number_of_dofs; ++i)
     {
+	std::cout << "Joint # " << i << " -> q = " << q[i] <<  " -> q_homing = " << q_homing[i] << std::endl;
         delta_q[i] = q_homing[i] - q[i];
         if ( fabs( delta_q[i] ) > max_q_increment )
             delta_q[i] = ( delta_q[i]/fabs(delta_q[i] ) ) * max_q_increment;
         q[i] += delta_q[i];
+	std::cout << "NEW q = " << q[i] << std::endl;
     }
 }
 
@@ -95,6 +98,7 @@ bool simple_homing::checkGoal()
 {
     for(unsigned int i = 0; i < q.size(); ++i){
         if( !( fabs( q[i] - q_homing[i] ) <= PRECISION) ) {
+	    std::cout << "Joint " << i << " not in homing" <<  std::endl;
             return false;
 	}
     }
@@ -105,6 +109,7 @@ void simple_homing::run()
 {   
     // if we have to go to homing position or we are moving -> control and move all the chains as specified in the homing vectors
     if( command_interface.getCommand() == "homing") {
+	// sense position
 	q = coman.sensePosition();
 
 	// notify the moving status
@@ -122,8 +127,6 @@ void simple_homing::run()
 	}
 	else 
 	{
-	    std::cout << "Moving ..." << std::endl;
-	    // torso chain
 	    control_and_move();
 	}
 
