@@ -60,12 +60,12 @@ bool simple_homing::custom_init()
     q = coman.sensePosition();
 
     // set all boards to position control mode
-    if(!coman.setPositionDirectMode())
+    if(!coman.setPositionMode())
         std::cout << "Error setting the robot in Position Mode" << std::endl;
 
-//     // set the speed ref for the chain
-//     if(!coman.setReferenceSpeed( max_vel ))
-//         std::cout << "Error calling setReferenceSpeed" << std::endl;
+    // set the speed ref for the chain
+    if(!coman.setReferenceSpeed( max_vel ))
+        std::cout << "Error calling setReferenceSpeed" << std::endl;
 
     return true;
 }
