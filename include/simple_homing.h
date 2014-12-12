@@ -6,21 +6,21 @@
 #include <idynutils/yarp_single_chain_interface.h>
 #include <GYM/yarp_command_interface.hpp>
 #include <GYM/yarp_status_interface.h>
-#include <GYM/generic_thread.hpp>
+#include <GYM/control_thread.hpp>
 #include <idynutils/comanutils.h>
 
 /**
  * @brief simple homing control thread: move all the joints of the robot to the desired homing position
  * 
  **/
-class simple_homing: public generic_thread
+class simple_homing: public control_thread
 {
 private:   
-    /**
-     * @brief whole-body control facilities
-     * 
-     */
-    ComanUtils coman;
+//     /**
+//      * @brief whole-body control facilities
+//      * 
+//      */
+//     ComanUtils coman;
     
     /**
      * @brief torso homing vector

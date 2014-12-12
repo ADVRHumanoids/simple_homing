@@ -1,7 +1,7 @@
 #ifndef SIMPLE_HOMING_MODULE_HPP_
 #define SIMPLE_HOMING_MODULE_HPP_
 
-#include <GYM/generic_module.hpp>
+#include <GYM/control_module.hpp>
 #include <idynutils/comanutils.h>
 
 #include "simple_homing.h"
@@ -12,7 +12,7 @@
  * 
  * @author Luca Muratore (luca.muratore@iit.it)
  */
-class simple_homing_module : public generic_module<simple_homing> {
+class simple_homing_module : public control_module<simple_homing> {
 public:
     
     /**
@@ -23,7 +23,7 @@ public:
                             char* argv[],
                             std::string module_prefix, 
                             int module_period, 
-                            yarp::os::ResourceFinder rf ) : generic_module<simple_homing>(  argc, 
+                            yarp::os::ResourceFinder rf ) : control_module<simple_homing>(  argc, 
                                                                                             argv, 
                                                                                             module_prefix, 
                                                                                             module_period,

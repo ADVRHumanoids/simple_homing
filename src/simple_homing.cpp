@@ -16,18 +16,17 @@
 simple_homing::simple_homing(std::string module_prefix, 
                              yarp::os::ResourceFinder rf, 
                              std::shared_ptr< paramHelp::ParamHelperServer > ph) :
-    generic_thread( module_prefix, rf, ph ),
-    coman( module_prefix ),
-    torso_homing( coman.torso.getNumberOfJoints(), 0.0 ),
-    left_arm_homing( coman.left_arm.getNumberOfJoints(), 0.0 ),
-    right_arm_homing( coman.right_arm.getNumberOfJoints(), 0.0 ),
-    left_leg_homing( coman.left_leg.getNumberOfJoints(), 0.0 ),
-    right_leg_homing( coman.right_leg.getNumberOfJoints(), 0.0 ),
-    q_homing( coman.getNumberOfJoints(), 0.0 ),
+    torso_homing( robot.torso.getNumberOfJoints(), 0.0 ),
+    left_arm_homing( robot.left_arm.getNumberOfJoints(), 0.0 ),
+    right_arm_homing( robot.right_arm.getNumberOfJoints(), 0.0 ),
+    left_leg_homing( robot.left_leg.getNumberOfJoints(), 0.0 ),
+    right_leg_homing( robot.right_leg.getNumberOfJoints(), 0.0 ),
+    q_homing( robot.getNumberOfJoints(), 0.0 ),
     max_vel( 0 ),
-    q( coman.getNumberOfJoints() ),
+    q( robot.getNumberOfJoints() ),
     command_interface( module_prefix ),
-    status_interface( module_prefix )
+    status_interface( module_prefix ),
+    control_thread( module_prefix, rf, ph )
 {
     // start the status chain_interface
     status_interface.start();
@@ -57,14 +56,14 @@ bool simple_homing::custom_init()
     max_q_increment = max_vel * ( static_cast<double>( get_thread_period() ) / 1000.0 ); //[radians]
     	
     // sense
-    q = coman.sensePosition();
+    q = robot.sensePosition();
 
     // set all boards to position control mode
-    if(!coman.setPositionMode())
+    if(!robot.setPositionMode())
         std::cout << "Error setting the robot in Position Mode" << std::endl;
 
     // set the speed ref for the chain
-    if(!coman.setReferenceSpeed( max_vel ))
+    if(!robot.setReferenceSpeed( max_vel ))
         std::cout << "Error calling setReferenceSpeed" << std::endl;
 
     return true;
@@ -75,7 +74,7 @@ void simple_homing::control_and_move()
     // control law
     controlLaw();
     // position move to homing
-    coman.move( q );
+    robot.move( q );
 }
 
 void simple_homing::controlLaw()
@@ -110,7 +109,7 @@ void simple_homing::run()
     // if we have to go to homing position or we are moving -> control and move all the chains as specified in the homing vectors
     if( command_interface.getCommand() == "homing") {
 	// sense position
-	q = coman.sensePosition();
+	q = robot.sensePosition();
 
 	// notify the moving status
 	status_interface.setStatus( MOVING_STATUS );
@@ -136,7 +135,7 @@ void simple_homing::run()
 void simple_homing::update_q_homing()
 {
     std:: cout << "Updating q_homing ..." << std::endl;
-    coman.fromRobotToIdyn( right_arm_homing, 
+    robot.fromRobotToIdyn( right_arm_homing, 
 			   left_arm_homing, 
 			   torso_homing, 
 			   right_leg_homing, 
@@ -148,13 +147,13 @@ void simple_homing::update_q_homing()
 bool simple_homing::custom_pause()
 {
     // set the ref speed to 0 for all the chains
-    coman.setReferenceSpeed( 0 );
+    robot.setReferenceSpeed( 0 );
 }
 
 bool simple_homing::custom_resume()
 {
     // set the ref speed to max_vel for all the chains
-    coman.setReferenceSpeed( max_vel );
+    robot.setReferenceSpeed( max_vel );
 }
 
 
