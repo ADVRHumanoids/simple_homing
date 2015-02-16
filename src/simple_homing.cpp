@@ -59,12 +59,14 @@ bool simple_homing::custom_init()
     q = robot.sensePosition();
 
     // set all boards to position control mode
-    if(!robot.setPositionMode())
-        std::cout << "Error setting the robot in Position Mode" << std::endl;
-
-    // set the speed ref for the chain
-    if(!robot.setReferenceSpeed( max_vel ))
-        std::cout << "Error calling setReferenceSpeed" << std::endl;
+    if(robot.isInPositionDirectMode())
+        std::cout<<"Robot is in Position Direct Mode!"<<std::endl;
+    else{
+        if(!robot.setPositionDirectMode())
+            std::cout << "Error setting the robot in Position Direct Mode" << std::endl;
+        else
+            std::cout<<"Robot was set in Position Direct Mode!"<<std::endl;
+    }
 
     return true;
 }
@@ -83,12 +85,12 @@ void simple_homing::controlLaw()
     yarp::sig::Vector delta_q(number_of_dofs);
     for(unsigned int i = 0; i < number_of_dofs; ++i)
     {
-	std::cout << "Joint # " << i << " -> q = " << q[i] <<  " -> q_homing = " << q_homing[i] << std::endl;
+        //std::cout << "Joint # " << i << " -> q = " << q[i] <<  " -> q_homing = " << q_homing[i] << std::endl;
         delta_q[i] = q_homing[i] - q[i];
         if ( fabs( delta_q[i] ) > max_q_increment )
             delta_q[i] = ( delta_q[i]/fabs(delta_q[i] ) ) * max_q_increment;
         q[i] += delta_q[i];
-	std::cout << "NEW q = " << q[i] << std::endl;
+        //std::cout << "NEW q = " << q[i] << std::endl;
     }
 }
 
@@ -97,9 +99,8 @@ bool simple_homing::checkGoal()
 {
     for(unsigned int i = 0; i < q.size(); ++i){
         if( !( fabs( q[i] - q_homing[i] ) <= PRECISION) ) {
-	    std::cout << "Joint " << i << " not in homing" <<  std::endl;
-            return false;
-	}
+        //std::cout << "Joint " << i << " not in homing" <<  std::endl;
+            return false;}
     }
     return true;
 }
@@ -108,27 +109,24 @@ void simple_homing::run()
 {   
     // if we have to go to homing position or we are moving -> control and move all the chains as specified in the homing vectors
     if( command_interface.getCommand() == "homing") {
-	// sense position
-	q = robot.sensePosition();
+        // sense position
+        q = robot.sensePosition();
 
-	// notify the moving status
-	status_interface.setStatus( MOVING_STATUS );
+        // notify the moving status
+        status_interface.setStatus( MOVING_STATUS );
     }
     
     if( status_interface.state == MOVING_STATUS ) {
-	// check the goal
-	if( checkGoal() )
-	{
-	    // notify the home status
-	    status_interface.setStatus( HOME_STATUS );
-	    // we are in homing position
-	    std::cout << "Reached Home Position" << std::endl;
-	}
-	else 
-	{
-	    control_and_move();
-	}
-
+        // check the goal
+        if( checkGoal() )
+        {
+            // notify the home status
+            status_interface.setStatus( HOME_STATUS );
+            // we are in homing position
+            std::cout << "Reached Home Position" << std::endl;
+        }
+        else
+            control_and_move();
     }
 }
 
@@ -146,14 +144,12 @@ void simple_homing::update_q_homing()
 
 bool simple_homing::custom_pause()
 {
-    // set the ref speed to 0 for all the chains
-    robot.setReferenceSpeed( 0 );
+
 }
 
 bool simple_homing::custom_resume()
 {
-    // set the ref speed to max_vel for all the chains
-    robot.setReferenceSpeed( max_vel );
+
 }
 
 
