@@ -19,8 +19,8 @@ simple_homing::simple_homing(std::string module_prefix,
     torso_homing( robot.torso.getNumberOfJoints(), 0.0 ),
     left_arm_homing( robot.left_arm.getNumberOfJoints(), 0.0 ),
     right_arm_homing( robot.right_arm.getNumberOfJoints(), 0.0 ),
-    left_leg_homing( robot.left_leg.getNumberOfJoints(), 0.0 ),
-    right_leg_homing( robot.right_leg.getNumberOfJoints(), 0.0 ),
+//    left_leg_homing( robot.left_leg.getNumberOfJoints(), 0.0 ),
+//    right_leg_homing( robot.right_leg.getNumberOfJoints(), 0.0 ),
     q_homing( robot.getNumberOfJoints(), 0.0 ),
     max_vel( 0 ),
     q( robot.getNumberOfJoints() ),
@@ -46,8 +46,8 @@ bool simple_homing::custom_init()
     ph->linkParam( PARAM_ID_TORSO, torso_homing.data() );
     ph->linkParam( PARAM_ID_LEFT_ARM, left_arm_homing.data() );
     ph->linkParam( PARAM_ID_RIGHT_ARM, right_arm_homing.data() );
-    ph->linkParam( PARAM_ID_LEFT_LEG, left_leg_homing.data() );
-    ph->linkParam( PARAM_ID_RIGHT_LEG, right_leg_homing.data() );
+   // ph->linkParam( PARAM_ID_LEFT_LEG, left_leg_homing.data() );
+    //ph->linkParam( PARAM_ID_RIGHT_LEG, right_leg_homing.data() );
     ph->linkParam( PARAM_ID_MAX_VEL, &max_vel );
     
     // initialize q homing
@@ -136,8 +136,8 @@ void simple_homing::update_q_homing()
     robot.fromRobotToIdyn( right_arm_homing, 
 			   left_arm_homing, 
 			   torso_homing, 
-			   right_leg_homing, 
-			   left_leg_homing,
+			   //right_leg_homing, 
+			   //left_leg_homing,
 			   q_homing);
 }
 
