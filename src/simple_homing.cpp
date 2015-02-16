@@ -65,7 +65,7 @@ bool simple_homing::custom_init()
         if(!robot.setPositionDirectMode())
             std::cout << "Error setting the robot in Position Direct Mode" << std::endl;
         else
-            std::cout<<"Robot was set in Position Direct Mode!"<<std::endl;
+            std::cout<<"Robot succesfully set in Position Direct Mode!"<<std::endl;
     }
 
     return true;
