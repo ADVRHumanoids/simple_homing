@@ -16,7 +16,7 @@
 simple_homing::simple_homing(std::string module_prefix, 
                              yarp::os::ResourceFinder rf, 
                              std::shared_ptr< paramHelp::ParamHelperServer > ph) :
-    torso_homing( robot.torso.getNumberOfJoints(), 0.0 ),
+//     torso_homing( robot.torso.getNumberOfJoints(), 0.0 ),
     left_arm_homing( robot.left_arm.getNumberOfJoints(), 0.0 ),
     right_arm_homing( robot.right_arm.getNumberOfJoints(), 0.0 ),
 //    left_leg_homing( robot.left_leg.getNumberOfJoints(), 0.0 ),
@@ -43,7 +43,7 @@ bool simple_homing::custom_init()
     
     // param helper link param for all the chains and the max_vel param
     std::shared_ptr<paramHelp::ParamHelperServer> ph = get_param_helper();
-    ph->linkParam( PARAM_ID_TORSO, torso_homing.data() );
+//     ph->linkParam( PARAM_ID_TORSO, torso_homing.data() );
     ph->linkParam( PARAM_ID_LEFT_ARM, left_arm_homing.data() );
     ph->linkParam( PARAM_ID_RIGHT_ARM, right_arm_homing.data() );
    // ph->linkParam( PARAM_ID_LEFT_LEG, left_leg_homing.data() );
@@ -135,7 +135,7 @@ void simple_homing::update_q_homing()
     std:: cout << "Updating q_homing ..." << std::endl;
     robot.fromRobotToIdyn( right_arm_homing, 
 			   left_arm_homing, 
-			   torso_homing, 
+// 			   torso_homing, 
 			   //right_leg_homing, 
 			   //left_leg_homing,
 			   q_homing);
