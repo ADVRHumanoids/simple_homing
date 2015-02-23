@@ -28,12 +28,12 @@ int main(int argc, char* argv[])
     rf.configure(argc, argv);
     // create my module
     simple_homing_module sp_mod = simple_homing_module( argc, argv, "simple_homing", MODULE_PERIOD, rf );
-        
-    // yarp network deinitialization
-    yarp.fini();
+
     
     // run the module
     sp_mod.runModule( rf );
-    
+            
+    // yarp network deinitialization
+    yarp.fini();
     exit(EXIT_SUCCESS);
 }

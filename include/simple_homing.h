@@ -62,7 +62,7 @@ private:
      * @brief whole-body position
      * 
      */
-    yarp::sig::Vector q;
+    yarp::sig::Vector q, sensed_q;
     
     /**
      * @brief max speed ref in [radians/second]

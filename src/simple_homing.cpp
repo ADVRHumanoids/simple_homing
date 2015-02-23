@@ -4,7 +4,7 @@
 #include "simple_homing.h"
 #include "simple_homing_constants.h"
 
-#define PRECISION 0.02 //[radians]
+#define PRECISION 0.1 //[radians]
 
 #define READY_STATUS "ready"
 #define MOVING_STATUS "moving"
@@ -13,6 +13,8 @@
 #define RAD2DEG    (180.0/M_PI)
 #define DEG2RAD    (M_PI/180.0)
 
+
+#define mirko 1
 simple_homing::simple_homing(std::string module_prefix, 
                              yarp::os::ResourceFinder rf, 
                              std::shared_ptr< paramHelp::ParamHelperServer > ph) :
@@ -76,7 +78,23 @@ void simple_homing::control_and_move()
     // control law
     controlLaw();
     // position move to homing
-    robot.move( q );
+    yarp::sig::Vector real_output(robot.getNumberOfJoints());
+    for (int i=0;i<robot.getNumberOfJoints();i++)
+    {
+	real_output[i]=q[i];
+	if (fabs(sensed_q[i]-q[i])>0.19)
+	{
+	    std::cout<<"----------------- HIGH VELOCITY in:"<<sensed_q[i]<<" out: "<<q[i]<<" i:"<<i
+		     <<" j:" << model.getJointNames()[i] << std::endl;
+	    real_output[i]=sensed_q[i]+0.1*(fabs(sensed_q[i]-q[i])/(q[i]-sensed_q[i]));
+	    usleep(200000);
+	}
+    }
+// #endif
+    
+   robot.move( real_output );
+
+//    robot.move( q );
 }
 
 void simple_homing::controlLaw()
@@ -98,7 +116,7 @@ void simple_homing::controlLaw()
 bool simple_homing::checkGoal()
 {
     for(unsigned int i = 0; i < q.size(); ++i){
-        if( !( fabs( q[i] - q_homing[i] ) <= PRECISION) ) {
+        if( !( fabs( sensed_q[i] - q_homing[i] ) <= PRECISION) ) {
         //std::cout << "Joint " << i << " not in homing" <<  std::endl;
             return false;}
     }
@@ -111,19 +129,31 @@ void simple_homing::run()
     if( command_interface.getCommand() == "homing") {
         // sense position
         q = robot.sensePosition();
-
         // notify the moving status
         status_interface.setStatus( MOVING_STATUS );
     }
+    sensed_q = robot.sensePosition();
+
     
     if( status_interface.state == MOVING_STATUS ) {
         // check the goal
         if( checkGoal() )
         {
+#ifdef mirko
+	    if (left_arm_homing[0]==0.4)
+		left_arm_homing[0]=-0.2;
+	    else left_arm_homing[0]=0.4;
+	    if (right_arm_homing[0]==0.4)
+		right_arm_homing[0]=-0.2;
+	    else
+		right_arm_homing[0]=0.4;
+	    update_q_homing();
+#else
             // notify the home status
             status_interface.setStatus( HOME_STATUS );
             // we are in homing position
             std::cout << "Reached Home Position" << std::endl;
+#endif
         }
         else
             control_and_move();
