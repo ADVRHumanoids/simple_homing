@@ -51,6 +51,12 @@ private:
      * 
      */
     yarp::sig::Vector right_leg_homing;
+
+    /**
+     * @brief head homing vector
+     *
+     */
+    yarp::sig::Vector head_homing;
     
     /**
      * @brief whole-body reference position

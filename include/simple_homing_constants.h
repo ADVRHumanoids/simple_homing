@@ -17,8 +17,11 @@
 // right_leg
 #define PARAM_ID_RIGHT_LEG 4
 #define PARAM_SIZE_RIGHT_LEG 6
+// head
+#define PARAM_ID_HEAD 5
+#define PARAM_SIZE_HEAD 2
 // max_vel
-#define PARAM_ID_MAX_VEL 5
+#define PARAM_ID_MAX_VEL 6
 #define PARAM_SIZE_MAX_VEL 1
 
 #endif

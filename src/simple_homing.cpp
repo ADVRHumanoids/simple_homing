@@ -21,6 +21,7 @@ simple_homing::simple_homing(std::string module_prefix,
     right_arm_homing( robot.right_arm.getNumberOfJoints(), 0.0 ),
     left_leg_homing( robot.left_leg.getNumberOfJoints(), 0.0 ),
     right_leg_homing( robot.right_leg.getNumberOfJoints(), 0.0 ),
+    head_homing(robot.head.getNumberOfJoints(), 0.0),
     q_homing( robot.getNumberOfJoints(), 0.0 ),
     max_vel( 0 ),
     q( robot.getNumberOfJoints() ),
@@ -48,6 +49,7 @@ bool simple_homing::custom_init()
     ph->linkParam( PARAM_ID_RIGHT_ARM, right_arm_homing.data() );
     ph->linkParam( PARAM_ID_LEFT_LEG, left_leg_homing.data() );
     ph->linkParam( PARAM_ID_RIGHT_LEG, right_leg_homing.data() );
+    ph->linkParam( PARAM_ID_HEAD, head_homing.data() );
     ph->linkParam( PARAM_ID_MAX_VEL, &max_vel );
     
     // initialize q homing
@@ -138,6 +140,7 @@ void simple_homing::update_q_homing()
 			   torso_homing, 
 			   right_leg_homing, 
 			   left_leg_homing,
+               head_homing,
 			   q_homing);
 }
 
