@@ -4,7 +4,7 @@
 #include "simple_homing.h"
 #include "simple_homing_constants.h"
 
-#define PRECISION 0.02 //[radians]
+#define PRECISION 0.1 //[radians]
 
 #define READY_STATUS "ready"
 #define MOVING_STATUS "moving"
