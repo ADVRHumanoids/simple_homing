@@ -32,7 +32,10 @@ simple_homing::simple_homing(std::string module_prefix,
     // start the status chain_interface
     status_interface.start();
     // notify the ready status
-    status_interface.setStatus( READY_STATUS );
+    if(status_definitions.status_to_code.count(READY_STATUS))
+	status_interface.setStatus(status_definitions.status_to_code.at(READY_STATUS) );
+    else
+	status_interface.setStatus( READY_STATUS );
 }
 
 bool simple_homing::custom_init()
@@ -115,7 +118,10 @@ void simple_homing::run()
         q = robot.sensePosition();
 
         // notify the moving status
-        status_interface.setStatus( MOVING_STATUS );
+	if(status_definitions.status_to_code.count(MOVING_STATUS))
+	    status_interface.setStatus(status_definitions.status_to_code.at(MOVING_STATUS) );
+	else
+	    status_interface.setStatus( MOVING_STATUS );
     }
     
     if( status_interface.state == MOVING_STATUS ) {
@@ -123,6 +129,9 @@ void simple_homing::run()
         if( checkGoal() )
         {
             // notify the home status
+	if(status_definitions.status_to_code.count(HOME_STATUS))
+	    status_interface.setStatus(status_definitions.status_to_code.at(HOME_STATUS) );
+	else
             status_interface.setStatus( HOME_STATUS );
             // we are in homing position
             std::cout << "Reached Home Position" << std::endl;
