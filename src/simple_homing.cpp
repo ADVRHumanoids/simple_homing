@@ -60,7 +60,7 @@ bool simple_homing::custom_init()
     // sense
     q = robot.sensePosition();
 
-    // set all boards to position control mode
+    // set all boards to position direct mode
     if(robot.isInPositionDirectMode())
         std::cout<<"Robot is in Position Direct Mode!"<<std::endl;
     else{
@@ -140,7 +140,7 @@ void simple_homing::update_q_homing()
 			   torso_homing, 
 			   right_leg_homing, 
 			   left_leg_homing,
-               head_homing,
+			   head_homing,
 			   q_homing);
 }
 
