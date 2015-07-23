@@ -8,7 +8,6 @@
 #include <GYM/yarp_status_interface.h>
 #include <GYM/control_thread.hpp>
 #include <idynutils/comanutils.h>
-#include "drc_shared/module_statuses/simple_homing_statuses.h"
 
 /**
  * @brief simple homing control thread: move all the joints of the robot to the desired homing position
@@ -93,7 +92,6 @@ private:
      * @brief simple_homing status interface
      * 
      */
-    walkman::drc::homing::status_definitions status_definitions;
     walkman::yarp_status_interface status_interface;
 
     void control_and_move();
