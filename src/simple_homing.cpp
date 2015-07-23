@@ -135,7 +135,6 @@ void simple_homing::run()
 void simple_homing::update_q_homing()
 {
     std:: cout << "Updating q_homing ..." << std::endl;
-<<<<<<< HEAD
     robot.fromRobotToIdyn( right_arm_homing, 
 			   left_arm_homing, 
 			   torso_homing, 
@@ -143,16 +142,6 @@ void simple_homing::update_q_homing()
 			   left_leg_homing,
 			   head_homing,
 			   q_homing);
-=======
-    robot.fromRobotToIdyn( 
-                    right_arm_homing, 
-                    left_arm_homing, 
-                    torso_homing, 
-                    right_leg_homing, 
-                    left_leg_homing,
-                    head_homing,
-                    q_homing);
->>>>>>> 493b93d7ecc789876bdaf98fd4c57813df3eff2f
 }
 
 
