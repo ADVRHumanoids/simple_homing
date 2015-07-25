@@ -40,7 +40,6 @@ endif()
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}")
 
 FIND_PACKAGE(iDynTree REQUIRED)
-FIND_PACKAGE(kdl_codyco REQUIRED)
 FIND_PACKAGE(YARP REQUIRED)
 FIND_PACKAGE(idynutils REQUIRED)
 FIND_PACKAGE(GYM REQUIRED)
@@ -51,7 +50,6 @@ INCLUDE_DIRECTORIES(include
 		    ${YARP_INCLUDE_DIRS} 
 		    ${idynutils_INCLUDE_DIRS}
 		    ${GYM_INCLUDE_DIRS}
-		    ${kdl_codyco_INCLUDE_DIRS} 
 		    )
 		    
 ADD_EXECUTABLE(simple_homing src/main.cpp 
