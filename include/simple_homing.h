@@ -8,6 +8,7 @@
 #include <GYM/yarp_status_interface.h>
 #include <GYM/control_thread.hpp>
 #include <idynutils/comanutils.h>
+#include <fstream>
 
 /**
  * @brief simple homing control thread: move all the joints of the robot to the desired homing position
@@ -69,6 +70,8 @@ private:
      * 
      */
     yarp::sig::Vector q;
+
+    std::vector<yarp::sig::Vector> all_q;
     
     /**
      * @brief max speed ref in [radians/second]
@@ -99,6 +102,8 @@ private:
     bool checkGoal();
 
     void controlLaw();
+
+    void recordTrj();
     
 public:
     

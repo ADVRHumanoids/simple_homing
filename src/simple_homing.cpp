@@ -13,6 +13,8 @@
 #define RAD2DEG    (180.0/M_PI)
 #define DEG2RAD    (M_PI/180.0)
 
+#define RECORD_TRJ true
+
 simple_homing::simple_homing(std::string module_prefix, 
                              yarp::os::ResourceFinder rf, 
                              std::shared_ptr< paramHelp::ParamHelperServer > ph) :
@@ -27,7 +29,8 @@ simple_homing::simple_homing(std::string module_prefix,
     q( robot.getNumberOfJoints() ),
     command_interface( module_prefix ),
     status_interface( module_prefix ),
-    control_thread( module_prefix, rf, ph )
+    control_thread( module_prefix, rf, ph ),
+    all_q()
 {
     // start the status chain_interface
     status_interface.start();
@@ -107,6 +110,69 @@ bool simple_homing::checkGoal()
     return true;
 }
 
+void simple_homing::recordTrj()
+{
+    std::ofstream FILE;
+    std::ofstream FILE_left_leg;
+    std::ofstream FILE_left_arm;
+    std::ofstream FILE_right_leg;
+    std::ofstream FILE_right_arm;
+    std::ofstream FILE_torso;
+    std::ofstream FILE_head;
+
+    FILE.open("all_joints_trj.m");
+    FILE<<"q = ["<<std::endl;
+    FILE_left_leg.open("left_leg_joints_trj.m");
+    FILE_left_leg<<"q_left_leg = ["<<std::endl;
+    FILE_right_leg.open("right_leg_joints_trj.m");
+    FILE_right_leg<<"q_right_leg = ["<<std::endl;
+    FILE_left_arm.open("left_arm_joints_trj.m");
+    FILE_left_arm<<"q_left_arm = ["<<std::endl;
+    FILE_right_arm.open("right_arm_joints_trj.m");
+    FILE_right_arm<<"q_right_arm = ["<<std::endl;
+    FILE_torso.open("torso_joints_trj.m");
+    FILE_torso<<"q_torso = ["<<std::endl;
+    FILE_head.open("head_joints_trj.m");
+    FILE_head<<"q_head = ["<<std::endl;
+
+    yarp::sig::Vector left_arm(robot.left_arm.getNumberOfJoints(),0.0);
+    yarp::sig::Vector right_arm(robot.right_arm.getNumberOfJoints(),0.0);
+    yarp::sig::Vector left_leg(robot.left_leg.getNumberOfJoints(),0.0);
+    yarp::sig::Vector right_leg(robot.right_leg.getNumberOfJoints(),0.0);
+    yarp::sig::Vector torso(robot.torso.getNumberOfJoints(),0.0);
+    yarp::sig::Vector head(robot.head.getNumberOfJoints(),0.0);
+    for(unsigned int i = 0; i < all_q.size(); ++i){
+        FILE<<all_q[i].toString()<<std::endl;
+
+        if(head.size() > 0){
+            robot.fromIdynToRobot(all_q[i],right_arm,left_arm,torso,right_leg,left_leg,head);
+            FILE_head<<head.toString()<<std::endl;}
+        else
+            robot.fromIdynToRobot(all_q[i],right_arm,left_arm,torso,right_leg,left_leg);
+        FILE_left_arm<<left_arm.toString()<<std::endl;
+        FILE_right_arm<<right_arm.toString()<<std::endl;
+        FILE_left_leg<<left_leg.toString()<<std::endl;
+        FILE_right_leg<<right_leg.toString()<<std::endl;
+        FILE_torso<<torso.toString()<<std::endl;
+    }
+
+    FILE<<"];"<<std::endl;
+    FILE.close();
+    FILE_left_arm<<"];"<<std::endl;
+    FILE_left_arm.close();
+    FILE_right_arm<<"];"<<std::endl;
+    FILE_right_arm.close();
+    FILE_left_leg<<"];"<<std::endl;
+    FILE_left_leg.close();
+    FILE_right_leg<<"];"<<std::endl;
+    FILE_right_leg.close();
+    FILE_head<<"];"<<std::endl;
+    FILE_head.close();
+    FILE_torso<<"];"<<std::endl;
+    FILE_torso.close();
+
+}
+
 void simple_homing::run()
 {   
     // if we have to go to homing position or we are moving -> control and move all the chains as specified in the homing vectors
@@ -126,9 +192,14 @@ void simple_homing::run()
             status_interface.setStatus( HOME_STATUS );
             // we are in homing position
             std::cout << "Reached Home Position" << std::endl;
+            if(RECORD_TRJ)
+                recordTrj();
         }
         else
+        {
+            all_q.push_back(q);
             control_and_move();
+        }
     }
 }
 
