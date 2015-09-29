@@ -13,7 +13,7 @@
 #define RAD2DEG    (180.0/M_PI)
 #define DEG2RAD    (M_PI/180.0)
 
-#define RECORD_TRJ true
+#define RECORD_TRJ false
 
 simple_homing::simple_homing(std::string module_prefix, 
                              yarp::os::ResourceFinder rf, 
