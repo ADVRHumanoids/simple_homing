@@ -18,7 +18,7 @@ yarp write ... /simple_homing/switch:i
 this way the module will go through the initialization procedure and start the execution of the main thread `run()`. To start the homing procedure you have to write to the port "command:i" of the module: 
 ```
 yarp write ... /simple_homing/command:i
->> homing
+>> homing 0
 ```
 
 
