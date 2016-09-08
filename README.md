@@ -10,6 +10,9 @@ Before using the module make sure to start yarp server by:
 yarpserver --write
 ```
 Then run gazebo simulator and insert the robot. Now you are ready to launch the module. 
+```
+simple_homing
+```
 After executing the binary you have to start the module execution by writing to the yarp port "switch:i" of the module:
 ```
 yarp write ... /simple_homing/switch:i
